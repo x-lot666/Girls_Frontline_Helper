@@ -1,5 +1,7 @@
 from core.macros import *
 
+# 溯源回归-行星环ex 自动打捞
+
 # 所用的资源图片的文件夹名称
 set_resource_subdir("back_to_origin")
 
@@ -32,7 +34,6 @@ def menu_enter_mission():
                     break
                 find_and_move(IMG("exchange_button"), x_offset=-1200)
                 drag_rel(1000, 0, duration=0.3)
-
 
     # 等待并点击“开始任务”
     wait_and_click_start_the_task()

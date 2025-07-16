@@ -1,5 +1,7 @@
 from core.macros import *
 
+# 灰域调查-计划模式 自动化执行
+
 # 所用的资源图片的文件夹名称
 set_resource_subdir("grey_zone_inquiry")
 
