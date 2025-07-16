@@ -1,5 +1,6 @@
 .idea/
 venv/
 __pycache__/
+assets/process_area
 
 secne/test.py

@@ -363,17 +363,15 @@ def activate_the_window(title_keyword):
         return False
 
     window = windows[0]
-    if window.isMinimized:
-        window.restore()
-
-    window.activate()
     hwnd = window._hWnd
 
-    # 设置为最前(TopMost)
+    if window.isMinimized:
+        win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+
+    # 强制置顶 + 激活窗口（跳过 pygetwindow.activate()）
+    win32gui.SetForegroundWindow(hwnd)
     win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0,
                           win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-
-    # 再取消置顶,使其恢复正常
     win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
                           win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
 
@@ -410,7 +408,7 @@ def jitter_path(path, jitter_range=1.5):
     return path + jitter
 
 
-def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, plot=False):
+def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, plot=True):
     """
     从 (x1, y1) 平滑移动鼠标到 (x2, y2),支持曲线轨迹、抖动、加速减速、轨迹可视化
     没有用pyautogui.moveTo(精度问题),使用win32api.SetCursorPos实现精确移动
