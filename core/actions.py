@@ -408,7 +408,7 @@ def jitter_path(path, jitter_range=1.5):
     return path + jitter
 
 
-def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, plot=True):
+def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, plot=False):
     """
     从 (x1, y1) 平滑移动鼠标到 (x2, y2),支持曲线轨迹、抖动、加速减速、轨迹可视化
     没有用pyautogui.moveTo(精度问题),使用win32api.SetCursorPos实现精确移动
