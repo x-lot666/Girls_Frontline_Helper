@@ -1,4 +1,4 @@
-from core.macros import *
+from game_ops.composed_tasks import *
 
 IMG = lambda name: f"assets/grey_zone_inquiry/{name}.png"
 

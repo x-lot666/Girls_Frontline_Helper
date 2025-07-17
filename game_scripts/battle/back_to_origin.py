@@ -1,4 +1,4 @@
-from core.macros import *
+from game_ops.composed_tasks import *
 
 # 溯源回归-行星环ex 自动打捞
 
@@ -18,7 +18,7 @@ def menu_enter_mission():
     wait_and_click_random(IMG("back_to_origin"))
 
     # 等待页面加载完成
-    wait_and_move(IMG("exchange_button"))
+    wait_image(IMG("exchange_button"))
 
     # 等待并点击“行星环ex”
     if locate_image(IMG("planetary_rings_ex")):

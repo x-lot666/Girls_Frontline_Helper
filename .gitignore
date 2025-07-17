@@ -3,4 +3,4 @@ venv/
 __pycache__/
 assets/process_area
 
-secne/test.py
+game_scripts/test.py

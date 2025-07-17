@@ -1,4 +1,4 @@
-from core.macros import *
+from game_ops.composed_tasks import *
 
 # 灰域调查-计划模式 自动化执行
 

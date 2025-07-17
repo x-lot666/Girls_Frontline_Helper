@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-from basic_ops import *
+from core_ops.basic_ops import *
 
 
 # 使用win32api来实现精确的鼠标点击和移动,详情见move_mouse_smoothly()函数
@@ -29,20 +29,25 @@ def left_click_at(x, y, duration=0.1):
     print(f"[操作] 左键点击位置 ({x}, {y})")
 
 
-def wait_image(image_path, confidence=0.8, interval=0.5):
+def wait_image(image_path, confidence=0.8, interval=0.5, timeout=-1):
     """
     等待图像出现
     :param image_path: 图片路径
     :param confidence: 相似度阈值,0-1之间
     :param interval: 等待间隔时间,单位秒
-    :return: Boolean, True为找到图像, False为未找到图像
+    :param timeout: 最长等待时间（秒），-1表示无限制
+    :return: 找到图像的位置 (x, y) 或 None
     """
     print(f"[等待] 正在等待图像出现: {image_path}")
+    start_time = time.time()
     while True:
         location = locate_image(image_path, confidence)
         if location:
             print(f"[完成] 找到图像位置: {image_path}")
-            return True
+            return location
+        if timeout != -1 and time.time() - start_time > timeout:
+            print(f"[超时] {timeout} 秒内未找到图像: {image_path}")
+            return None
         time.sleep(interval)
 
 
@@ -68,7 +73,7 @@ def find_and_move(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset
     return False
 
 
-def wait_and_move(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5):
+def wait_and_move(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5, timeout=-1):
     """
     等待图像出现并移动鼠标
     :param image_path: 图片路径
@@ -77,23 +82,22 @@ def wait_and_move(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset
     :param x_offset: x轴偏移量
     :param y_offset: y轴偏移量
     :param interval: 等待间隔时间,单位秒
-    :return: 
+    :param timeout: 最长等待时间（秒），-1表示无限制
+    :return: Boolean, True为找到并移动鼠标, False为未找到图像
     """
-    print(f"[等待] 正在等待图像出现: {image_path}")
-    while True:
-        location = locate_image(image_path, confidence)
-        if location:
-            time.sleep(0.8)  # 确保图像稳定后再点击
-            current_x, current_y = pyautogui.position()  # 获取当前鼠标位置
-            move_mouse_smoothly(current_x, current_y, location.x + x_offset, location.y + y_offset, duration=duration,
-                                overshoot=True)
-            # move_to(location.x + x_offset, location.y + y_offset, duration) #直接移动鼠标到目标位置
-            print(f"[完成] 鼠标已移动到图像位置: {image_path}")
-            return True
-        time.sleep(interval)
+    location = wait_image(image_path, confidence, interval, timeout)
+    if location is not None:
+        time.sleep(0.8)  # 确保图像稳定后再移动
+        current_x, current_y = pyautogui.position()  # 获取当前鼠标位置
+        move_mouse_smoothly(current_x, current_y, location.x + x_offset, location.y + y_offset, duration=duration,
+                            overshoot=True)
+        # move_to(location.x + x_offset, location.y + y_offset, duration) #直接移动鼠标到目标位置
+        print(f"[完成] 鼠标已移动到图像位置: {image_path}")
+        return True
+    return False
 
 
-def wait_and_move_random(image_path, confidence=0.8, padding=10, duration=0.1, x_offset=0, y_offset=0, interval=0.5):
+def wait_and_move_random(image_path, confidence=0.8, padding=10, duration=0.1, x_offset=0, y_offset=0, interval=0.5, timeout=-1):
     """
     等待图像出现并移动鼠标到图像内的随机位置
     :param image_path: 图片路径
@@ -103,20 +107,19 @@ def wait_and_move_random(image_path, confidence=0.8, padding=10, duration=0.1, x
     :param x_offset: x轴偏移量
     :param y_offset: y轴偏移量
     :param interval: 等待间隔时间,单位秒
-    :return: 
+    :param timeout: 最长等待时间（秒），-1表示无限制
+    :return: Boolean, True为找到并移动鼠标, False为未找到图像
     """
-    print(f"[等待] 正在等待图像出现: {image_path}")
-    while True:
+    if wait_image(image_path, confidence, interval, timeout) is not None:
         location = locate_random_point_in_image(image_path, confidence, padding)
-        if location:
-            time.sleep(0.8)  # 确保图像稳定后再点击
-            current_x, current_y = pyautogui.position()  # 获取当前鼠标位置
-            move_mouse_smoothly(current_x, current_y, location.x + x_offset, location.y + y_offset, duration=duration,
-                                overshoot=True)
-            # move_to(location.x + x_offset, location.y + y_offset, duration) #直接移动鼠标到目标位置
-            print(f"[完成] 鼠标已移动到图像位置: {image_path}")
-            return True
-        time.sleep(interval)
+        time.sleep(0.8)  # 确保图像稳定后再移动
+        current_x, current_y = pyautogui.position()  # 获取当前鼠标位置
+        move_mouse_smoothly(current_x, current_y, location.x + x_offset, location.y + y_offset, duration=duration,
+                            overshoot=True)
+        # move_to(location.x + x_offset, location.y + y_offset, duration) #直接移动鼠标到目标位置
+        print(f"[完成] 鼠标已移动到图像位置: {image_path}")
+        return True
+    return False
 
 
 def find_and_click(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0):
@@ -138,7 +141,7 @@ def find_and_click(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offse
     return False
 
 
-def wait_and_click(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5):
+def wait_and_click(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5, timeout=-1):
     """
     等待图像出现并点击
     :param image_path: 图片路径
@@ -147,40 +150,39 @@ def wait_and_click(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offse
     :param x_offset: x轴偏移量
     :param y_offset: y轴偏移量
     :param interval: 等待间隔时间,单位秒
-    :return: 
+    :param timeout: 最长等待时间（秒），-1表示无限制
+    :return: Boolean, True为找到并点击, False为未找到图像
     """
-    print(f"[等待] 正在等待图像出现: {image_path}")
-    while True:
-        location = locate_image(image_path, confidence)
-        if location:
-            time.sleep(0.8)  # 确保图像稳定后再点击
-            left_click_at(location.x + x_offset, location.y + y_offset, duration)
-            print(f"[完成] 点击图像: {image_path}")
-            return True
-        time.sleep(interval)
+
+    location = wait_image(image_path, confidence, interval, timeout)
+    if location is not None:
+        time.sleep(0.8)  # 确保图像稳定后再点击
+        left_click_at(location.x + x_offset, location.y + y_offset, duration)
+        print(f"[完成] 点击图像: {image_path}")
+        return True
+    return False
 
 
-def wait_and_click_random(image_path, confidence=0.8, padding=10, duration=0.1, x_offset=0, y_offset=0, interval=0.5):
+def wait_and_click_random(image_path, confidence=0.8, padding=10, duration=0.1, x_offset=0, y_offset=0, interval=0.5, timeout=-1):
     """
     等待图像出现并点击图像内的随机位置
     :param image_path: 图片路径
     :param confidence: 相似度阈值,0-1之间
     :param padding: 图像边缘的安全间距,避免点击到边缘,单位像素
-    :param duration: 移动鼠标的时间,单位秒 
+    :param duration: 移动鼠标的时间,单位秒
     :param x_offset: x轴偏移量
     :param y_offset: y轴偏移量
     :param interval: 等待间隔时间,单位秒
-    :return: 
+    :param timeout: 最长等待时间（秒），-1表示无限制
+    :return: Boolean, True为找到并点击, False为未找到图像
     """
-    print(f"[等待] 正在等待图像出现: {image_path}")
-    while True:
+    if wait_image(image_path, confidence, interval, timeout) is not None:
         location = locate_random_point_in_image(image_path, confidence, padding)
-        if location:
-            time.sleep(0.8)  # 确保图像稳定后再点击
-            left_click_at(location.x + x_offset, location.y + y_offset, duration)
-            print(f"[完成] 点击图像: {image_path}")
-            return True
-        time.sleep(interval)
+        time.sleep(0.8)  # 确保图像稳定后再点击
+        left_click_at(location.x + x_offset, location.y + y_offset, duration)
+        print(f"[完成] 点击图像: {image_path}")
+        return True
+    return False
 
 
 def hold_click_until_image(image_path, confidence=0.8, interval=0.5):
