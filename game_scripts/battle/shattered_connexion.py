@@ -3,7 +3,8 @@ from game_ops.composed_tasks import *
 """
 裂变链接-底层归乡2 战斗EX 自动打捞(MP41)
 说明:
- - 把主力队放在第一梯队，狗粮队放在第二梯队。
+ - 把主力队放在第一梯队,狗粮队放在第二梯队。
+ - 推荐队伍 三改 Zas M21,带光学瞄具, 五星必杀2空降妖精(实测四星的空降妖精也行)
 """
 
 # 所用的资源图片的文件夹名称
@@ -97,7 +98,7 @@ def start_mission_actions():
 
     # 部署第一梯队并开始作战,第一梯队已经在场上(重复作战)就直接开始作战------------------------------------
     if locate_image(IMG("team_1")) is None:
-        # 寻找指挥部,如果没找到，就缩放地图
+        # 寻找指挥部,如果没找到,就缩放地图
         if locate_image(IMG("airport"), confidence=0.75) is None:
             scroll_mouse(-1, 50)
         wait_and_click_random(IMG("airport"), confidence=0.75)  # 点击指挥部
