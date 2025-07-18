@@ -70,21 +70,27 @@ def double_left_click():
 
 
 # 鼠标滚轮滚动(正值向上,负值向下)
-def scroll_mouse(circles=1):
-    units = int(circles * 120)  # 120是鼠标滚轮的一个刻度
-    # 调用鼠标滚轮事件，最后一个参数是滚动的单位数，正数向上滚，负数向下滚
-    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, units, 0)
-    print(f"[操作] 鼠标滚动 {circles} 圈({units} 单位)")
+def scroll_mouse(circles=1, repeat=1):
+    """
+    模拟鼠标滚轮滚动操作
+    :param circles: 每次滚动的圈数，正值向上，负值向下
+    :param repeat: 重复执行的次数，默认1
+    """
+    units = int(circles * 120)  # 120 是滚轮一圈的单位
+    for i in range(repeat):
+        win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, units, 0)
+        time.sleep(0.02)
+    print(f"[操作] 鼠标滚动 {circles} 圈, 重复 {repeat} 次")
 
 
 # 拖动鼠标相对位置(按住左键拖动)
-def drag_rel(dx, dy, duration=0.1):
+def drag_rel(dx, dy, duration=0.3):
     pyautogui.dragRel(dx, dy, duration=duration, button='left')
     print(f"[操作] 拖动鼠标 相对移动 dx={dx}, dy={dy}")
 
 
 # 拖动鼠标到绝对位置(按住左键拖动)
-def drag_to(x, y, duration=0.1):
+def drag_to(x, y, duration=0.3):
     pyautogui.dragTo(x, y, duration=duration, button='left')
     print(f"[操作] 拖动鼠标 到位置 ({x}, {y})")
 

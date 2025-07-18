@@ -101,6 +101,41 @@ def wait_and_click_fix_all_dolls():
     wait_and_click_random(COMMON_IMG("fix_all_dolls"))
 
 
+# 等待并点击"重新作战"
+def wait_and_click_restart_battle():
+    wait_and_click_random(COMMON_IMG("restart_battle"))
+
+
+# 等待并点击"补给按钮"
+def wait_and_click_supply_button():
+    wait_and_click_random(COMMON_IMG("supply_button"))
+
+
+# 等待并点击"撤离按钮"
+def wait_and_click_retreat_button():
+    wait_and_click_random(COMMON_IMG("retreat_button"))
+
+
+# 等待并点击"结束回合"
+def wait_and_click_end_round_button():
+    wait_and_click_random(COMMON_IMG("end_round_button"))
+
+
+# 等待并点击"设置按钮"
+def wait_and_click_config_button():
+    wait_and_click_random(COMMON_IMG("config_button"))
+
+
+# 等待并点击"切换按钮"
+def wait_and_click_toggle_button():
+    wait_and_click(COMMON_IMG("toggle_button"))
+
+
+# 等待并点击"作战配置"
+def wait_and_click_battle_config():
+    wait_and_click_random(COMMON_IMG("battle_config"))
+
+
 # 等待并点击
 def wait_and_click_():
     wait_and_click_random(COMMON_IMG(""))

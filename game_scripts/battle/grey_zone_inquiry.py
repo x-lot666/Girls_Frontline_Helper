@@ -1,6 +1,9 @@
 from game_ops.composed_tasks import *
 
-# 灰域调查-计划模式 自动化执行
+"""
+灰域调查-计划模式 自动化执行
+本脚本使用的仍然是游戏内置的计划模式,只是针对灰域调查的各种意外窗口进行了处理
+"""
 
 # 所用的资源图片的文件夹名称
 set_resource_subdir("grey_zone_inquiry")

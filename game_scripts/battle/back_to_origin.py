@@ -1,6 +1,10 @@
 from game_ops.composed_tasks import *
 
-# 溯源回归-行星环ex 自动打捞
+"""
+溯源回归-行星环ex 自动打捞
+说明:
+ - 把主力队放在第一梯队。
+"""
 
 # 所用的资源图片的文件夹名称
 set_resource_subdir("back_to_origin")
@@ -24,7 +28,7 @@ def menu_enter_mission():
     if locate_image(IMG("planetary_rings_ex")):
         wait_and_click_random(IMG("planetary_rings_ex"))
     else:
-        scroll_mouse(-3)  # 向下滚动鼠标,缩小地图
+        scroll_mouse(-3, 10)  # 向下滚动鼠标,缩小地图
         while True:
             if locate_image(IMG("planetary_rings_ex")):
                 wait_and_click_random(IMG("planetary_rings_ex"))
@@ -33,12 +37,12 @@ def menu_enter_mission():
             while True:
                 if locate_image(IMG("day_1")):
                     find_and_move(IMG("exchange_button"), x_offset=-700)
-                    drag_rel(-500, 0, duration=0.3)
+                    drag_rel(-500, 0)
                     break
                 find_and_move(IMG("exchange_button"), x_offset=-1200)
-                drag_rel(1000, 0, duration=0.3)
+                drag_rel(1000, 0)
 
-    # 等待并点击“开始任务”
+    # 等待并点击“确认出击”
     wait_and_click_start_the_task()
 
     # 定位“机场”
@@ -87,21 +91,28 @@ def repeat_mission():
 
 # 进入作战后 到 结算页面前 的所有操作
 def start_mission_actions():
+    wait(0.5)
+
     # 等待并点击“开始作战”
     wait_and_click_start_battle()
 
     # 等待动画
     wait(3.6)
 
-    # 等待并点击“team 1”
-    wait_and_click(IMG("team_1"), x_offset=-100, y_offset=30)
+    # 选中“team 1”
+    wait_and_click(IMG("team_1"), x_offset=-33, y_offset=30)
+    wait(0.2)
+    wait_and_click(IMG("team_1"), x_offset=-33, y_offset=30)
+
+    # 等待并点击“补给按钮”
+    wait_and_click_supply_button()
 
     # 等待并点击“计划模式”
     wait_and_click_enable_plan_mode()
     wait(0.5)
 
     # 点击人形最下面的敌人
-    wait_and_move(IMG("team_1"), x_offset=-100, y_offset=360)
+    wait_and_move(IMG("team_1"), x_offset=-33, y_offset=360)
     # double_left_click()
     one_left_click()
 
