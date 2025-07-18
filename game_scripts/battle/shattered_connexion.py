@@ -8,7 +8,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("process_area")
+set_resource_subdir("shattered_connexion")
 
 
 def menu_enter_mission():
@@ -179,9 +179,8 @@ def check_action_limit(action_count, max_actions):
         return True
 
 
-def main(max_actions=3):
+def main(max_actions=6):
     """
-    自动执行灰域调查场景
     :param max_actions: 最大执行次数
     :return:
     """
