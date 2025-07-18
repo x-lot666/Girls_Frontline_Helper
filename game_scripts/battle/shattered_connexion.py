@@ -104,7 +104,7 @@ def start_mission_actions():
         wait_and_click_random(IMG("airport"), confidence=0.75)  # 点击指挥部
         wait_and_click_confirm()  # 点击确认部署
     wait_and_click_start_battle()  # 点击开始作战
-    wait(2)  # 等待动画加载
+    wait_in_range(2.2, 3)  # 等待动画加载
     # 部署第一梯队并开始作战,第一梯队已经在场上(重复作战)就直接开始作战------------------------------------
 
     # 选中第一梯队,并补给----------------------------------------------------------------------------
@@ -118,6 +118,7 @@ def start_mission_actions():
     wait_and_click(IMG("team_1"), x_offset=-36, y_offset=-96)  # 向上一格
     wait(1)
     wait_and_click_random(IMG("airport"), confidence=0.75)
+    wait(1)
     wait_and_click_random(IMG("deploy_button"))
     wait_and_click_confirm()
     # 让第一梯队向上一格,并部署第二梯队-----------------------------------------------------------------
@@ -126,7 +127,7 @@ def start_mission_actions():
     wait_and_click_end_round_button()  # 点击结束回合
     wait_and_move(IMG("battle_end_flag"), x_offset=200, y_offset=300)  # 移动到战斗结束标志
     hold_click_until_image(COMMON_IMG("mark_image_794"), interval=0.8)  # 持续点击直到794(战斗结束的标识)出现
-    wait(10)
+    wait_in_range(8.5, 9.5)
     # 结束回合,并等待战斗结束-------------------------------------------------------------------------
 
     # 让第二梯队撤离---------------------------------------------------------------------------------

@@ -282,6 +282,18 @@ def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, 
     :param overshoot: 是否加入“偏移后回正”效果
     :param plot: 是否开启可视化路径
     """
+    dx = x2 - x1
+    dy = y2 - y1
+    distance = math.hypot(dx, dy)
+
+    # 根据移动距离调整 overshoot 与偏移量
+    overshoot = overshoot and distance > 300  # 短距离不使用 overshoot
+
+    # 控制点偏移强度因距离缩放（短距离偏移小）
+    offset_scale = min(distance / 200, 1.0)
+    ctrl_offset = int(80 * offset_scale)
+    jitter_strength = 1.0 * offset_scale
+
     # 生成贝塞尔曲线路径
     if overshoot:
         ox = random.choice([-1, 1]) * random.randint(10, 30)
@@ -290,7 +302,8 @@ def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, 
         y2_overshoot = y2 + oy
         control_points = [
             (x1, y1),
-            ((x1 + x2) / 2 + random.randint(-80, 80), (y1 + y2) / 2 + random.randint(-80, 80)),
+            ((x1 + x2) / 2 + random.randint(-ctrl_offset, ctrl_offset),
+             (y1 + y2) / 2 + random.randint(-ctrl_offset, ctrl_offset)),
             ((x1 + x2_overshoot) / 2, (y1 + y2_overshoot) / 2),
             (x2_overshoot, y2_overshoot)
         ]
@@ -299,13 +312,15 @@ def move_mouse_smoothly(x1, y1, x2, y2, duration=0.1, steps=30, overshoot=True, 
     else:
         control_points = [
             (x1, y1),
-            ((x1 + x2) / 2 + random.randint(-80, 80), (y1 + y2) / 2 + random.randint(-80, 80)),
+            ((x1 + x2) / 2 + random.randint(-ctrl_offset, ctrl_offset),
+             (y1 + y2) / 2 + random.randint(-ctrl_offset, ctrl_offset)),
             (x2, y2)
         ]
         path = bezier_curve(control_points, n=steps)
 
     # 抖动
-    path = jitter_path(path, jitter_range=1.0)
+    if jitter_strength > 0:
+        path = jitter_path(path, jitter_range=jitter_strength)
 
     # 可视化
     if plot:
