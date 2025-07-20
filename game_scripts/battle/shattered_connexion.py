@@ -5,7 +5,7 @@ from game_ops.composed_tasks import *
 说明:
     - 把主力队放在第一梯队,狗粮队放在第二梯队。
     - 推荐队伍 三改 Zas M21,带光学瞄具, 五星必杀2空降妖精(实测四星的空降妖精也行)
-    - 确保第一次进入战斗前,人形未满员(第一次不做自动回收处理”。
+    - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
     - 关闭"回合结束二次确认"和"自动补给"
 """
 
@@ -35,6 +35,7 @@ def menu_enter_mission():
         MouseOps.scroll_mouse(3)
         wait(0.5)
         MouseOps.one_left_click()
+    wait(1)  # 非常重要,等待动画加载
     ImageOps.find_image(IMG("shattered_connexion"), random_point=True, action="click")
 
     # ==========================
@@ -97,13 +98,14 @@ def start_mission_actions():
     """
     # 等待"开始作战"按钮出现
     ImageOps.wait_image(COMMON_IMG("start_battle"))
+    wait(2)
 
     # 部署第一梯队并开始作战,第一梯队已经在场上(重复作战)就直接开始作战------------------------------------
     if ImageOps.locate_image(IMG("team_1")) is None:
         # 寻找指挥部,如果没找到,就缩放地图
-        if ImageOps.locate_image(IMG("airport"), confidence=0.75) is None:
+        if ImageOps.locate_image(IMG("hq_base"), confidence=0.75) is None:
             MouseOps.scroll_mouse(-1, 50)
-        ImageOps.find_image(IMG("airport"), confidence=0.75, random_point=True, action="click")
+        ImageOps.find_image(IMG("hq_base"), confidence=0.75, random_point=True, action="click")
         BasicTasks.click_confirm()  # 点击确认部署
     BasicTasks.click_start_battle()  # 点击开始作战
     wait_in_range(2.2, 3)  # 等待动画加载
@@ -119,7 +121,7 @@ def start_mission_actions():
     # 让第一梯队向上一格,并部署第二梯队-----------------------------------------------------------------
     ImageOps.find_image(IMG("team_1"), x_offset=-36, y_offset=-96, action="click")
     wait(1)
-    ImageOps.find_image(IMG("airport"), confidence=0.75, random_point=True, action="click")
+    ImageOps.find_image(IMG("hq_base"), confidence=0.75, random_point=True, action="click")
     wait(1)
     ImageOps.find_image(IMG("deploy_button"), random_point=True, action="click")
     BasicTasks.click_confirm()
