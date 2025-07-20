@@ -20,14 +20,14 @@ def menu_enter_mission():
     # 从主菜单进入"裂变链接"活动
     # ==========================
 
-    # 等待并点击“首页-战斗”
-    wait_and_click_home_battle_button()
+    # 点击“首页-战斗”
+    BasicTasks.click_home_battle_button()
 
     wait(1)
 
-    # 等待并点击“常驻活动”
+    # 点击“常驻活动”
     wait_and_click(IMG("mark_image"), y_offset=-200)
-    # 等待并点击“裂变链接”
+    # 点击“裂变链接”
     if not wait_image(IMG("shattered_connexion"), timeout=1):
         wait_and_move(IMG("mark_image"), x_offset=200, y_offset=-660)
         scroll_mouse(3)
@@ -47,7 +47,7 @@ def menu_enter_mission():
     location = locate_image(IMG("return_to_base_2_ex"), confidence=0.9)
     if location is not None:
         left_click_at(location.x, location.y)
-        wait_and_click_start_the_task()  # 点击"确认出击"
+        BasicTasks.click_start_the_task()  # 点击"确认出击"
     else:
         if locate_image(IMG("back_button")) is not None:
             wait_and_click_random(IMG("back_button"))
@@ -72,7 +72,7 @@ def menu_enter_mission():
             location = locate_image(IMG("return_to_base_2_ex"), confidence=0.9)
             if location is not None:
                 left_click_at(location.x, location.y)
-                wait_and_click_start_the_task()  # 点击"确认出击"
+                BasicTasks.click_start_the_task()  # 点击"确认出击"
                 break
             wait_and_move(IMG("mark_image_logo"), x_offset=200, y_offset=200)
             drag_rel(1000, 0)
@@ -83,10 +83,10 @@ def repeat_mission():
     重复进行入任务
     """
     wait(2)
-    # 等待并点击"终止作战-白色按钮"
-    wait_and_click_cancel_battle_white()
-    # 等待并点击"重新作战"
-    wait_and_click_restart_battle()
+    # 点击"终止作战-白色按钮"
+    BasicTasks.click_cancel_battle_white()
+    # 点击"重新作战"
+    BasicTasks.click_restart_battle()
 
 
 def start_mission_actions():
@@ -102,8 +102,8 @@ def start_mission_actions():
         if locate_image(IMG("airport"), confidence=0.75) is None:
             scroll_mouse(-1, 50)
         wait_and_click_random(IMG("airport"), confidence=0.75)  # 点击指挥部
-        wait_and_click_confirm()  # 点击确认部署
-    wait_and_click_start_battle()  # 点击开始作战
+        BasicTasks.click_confirm()  # 点击确认部署
+    BasicTasks.click_start_battle()  # 点击开始作战
     wait_in_range(2.2, 3)  # 等待动画加载
     # 部署第一梯队并开始作战,第一梯队已经在场上(重复作战)就直接开始作战------------------------------------
 
@@ -111,7 +111,7 @@ def start_mission_actions():
     wait_and_click(IMG("team_1"), x_offset=-30, y_offset=30)  # 选中team1
     wait(0.2)
     wait_and_click(IMG("team_1"), x_offset=-30, y_offset=30)  # 选中team1
-    wait_and_click_supply_button()
+    BasicTasks.click_supply_button()
     # 选中第一梯队,并补给----------------------------------------------------------------------------
 
     # 让第一梯队向上一格,并部署第二梯队-----------------------------------------------------------------
@@ -120,11 +120,11 @@ def start_mission_actions():
     wait_and_click_random(IMG("airport"), confidence=0.75)
     wait(1)
     wait_and_click_random(IMG("deploy_button"))
-    wait_and_click_confirm()
+    BasicTasks.click_confirm()
     # 让第一梯队向上一格,并部署第二梯队-----------------------------------------------------------------
 
     # 结束回合,并等待战斗结束-------------------------------------------------------------------------
-    wait_and_click_end_round_button()  # 点击结束回合
+    BasicTasks.click_end_round_button()  # 点击结束回合
     wait_and_move(IMG("battle_end_flag"), x_offset=200, y_offset=300)  # 移动到战斗结束标志
     hold_click_until_image(COMMON_IMG("mark_image_794"), interval=0.8)  # 持续点击直到794(战斗结束的标识)出现
     wait_in_range(8.5, 9.5)
@@ -134,18 +134,18 @@ def start_mission_actions():
     wait_and_click(IMG("team_2"), x_offset=-30, y_offset=30)
     wait(0.2)
     wait_and_click(IMG("team_2"), x_offset=-30, y_offset=30)
-    wait_and_click_retreat_button()
-    wait_and_click_confirm()
+    BasicTasks.click_retreat_button()
+    BasicTasks.click_confirm()
     wait(2)
     # 让第二梯队撤离---------------------------------------------------------------------------------
 
     # 开启计划模式,让第一梯队沿着路径点执行计划-----------------------------------------------------------
-    wait_and_click_enable_plan_mode()
+    BasicTasks.click_enable_plan_mode()
     wait_and_click(IMG("team_1"), x_offset=-30, y_offset=30)  # 选中team1
     wait_and_click(IMG("team_1"), x_offset=120, y_offset=30)  # 往右一格
     wait_and_click(IMG("team_1"), x_offset=120, y_offset=-96)  # 向右上一格
     wait_and_click(IMG("team_1"), x_offset=-196, y_offset=-96)  # 向左上一格
-    wait_and_click_execute_plan()
+    BasicTasks.click_execute_plan()
     # 开启计划模式,让第一梯队沿着路径点执行计划-----------------------------------------------------------
 
     while True:
@@ -166,12 +166,12 @@ def return_to_main_menu():
     任务结束后,返回主菜单
     """
     wait(2)
-    # 等待并点击"终止作战-白色按钮"
-    wait_and_click_cancel_battle_white()
-    # 等待并点击"终止作战-橙色按钮"
-    wait_and_click_cancel_battle_orange()
-    # 等待并点击“返回按钮”
-    wait_and_click_back_button()
+    # 点击"终止作战-白色按钮"
+    BasicTasks.click_cancel_battle_white()
+    # 点击"终止作战-橙色按钮"
+    BasicTasks.click_cancel_battle_orange()
+    # 点击“返回按钮”
+    BasicTasks.click_back_button()
 
 
 # 检查执行次数是否超过限制

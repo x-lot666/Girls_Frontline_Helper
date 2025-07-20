@@ -1,7 +1,11 @@
 from pathlib import Path
 
-# 项目根目录 = 当前文件(utils/resource.py)往上两层
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+"""
+资源路径工具
+"""
+
+# 项目根目录 = 当前文件(utils/resource_utils.py)往上三层
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # 默认资源子目录,可以在外部修改
 RESOURCE_SUBDIR = "common"

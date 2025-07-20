@@ -14,12 +14,12 @@ def menu_enter_mission():
     从主菜单进入任务
     """
 
-    # 等待并点击“‘灰域调查’活动入口”
+    # 点击“‘灰域调查’活动入口”
     wait_and_click_random(IMG("grey_zone_inquiry"))
 
     wait(1)
 
-    # 等待并点击“计划模式”
+    # 点击“计划模式”
     wait_and_click_random(IMG("plan_mode"), padding=10)
 
     wait(1)
@@ -28,10 +28,10 @@ def menu_enter_mission():
     if locate_image(IMG("select_probe_and_resource")):
         wait_and_click_random(IMG("select_probe_and_resource"))
 
-    # 等待并点击“全选按钮”
+    # 点击“全选按钮”
     wait_and_click_random(IMG("select_all_button"))
 
-    # 等待并点击“运行计划模式”
+    # 点击“运行计划模式”
     wait_and_click_random(IMG("execution_plan_mode"))
 
 
@@ -40,18 +40,18 @@ def repeat_mission(select_difficulty="hard_mode"):
     重复进行入任务
     """
 
-    # 等待并点击“刷新按钮”
+    # 点击“刷新按钮”
     wait_and_click_random(IMG("refresh_button"), confidence=0.9)
 
-    # 等待并点击“困难难度”
+    # 点击“困难难度”
     wait_and_click_random(IMG(select_difficulty))
 
-    # 等待并点击“确定”
-    wait_and_click_confirm()
+    # 点击“确定”
+    BasicTasks.click_confirm()
 
     wait(6)
 
-    # 等待并点击“计划模式”
+    # 点击“计划模式”
     wait_and_click_random(IMG("plan_mode"), padding=15)
 
     wait(1)
@@ -60,10 +60,10 @@ def repeat_mission(select_difficulty="hard_mode"):
     if locate_image(IMG("select_probe_and_resource")):
         wait_and_click_random(IMG("select_probe_and_resource"))
 
-    # 等待并点击“全选按钮”
+    # 点击“全选按钮”
     wait_and_click_random(IMG("select_all_button"))
 
-    # 等待并点击“运行计划模式”
+    # 点击“运行计划模式”
     wait_and_click_random(IMG("execution_plan_mode"))
 
 
@@ -97,34 +97,34 @@ def deal_unexpected_windows_mission_failed():
     if locate_image(IMG("mission_failed")):
         print("[检测到] 任务失败:'当前战斗存在困难,将中断代理作战'")
 
-        # 等待并点击“关闭按钮”
-        wait_and_click_close_button()
-        # 等待并点击“重新战斗”
-        wait_and_click_retry_battle()
+        # 点击“关闭按钮”
+        BasicTasks.click_close_button()
+        # 点击“重新战斗”
+        BasicTasks.click_retry_battle()
         wait(1.5)
-        # 等待并点击“暂停战斗”
-        wait_and_click_pause_battle()
-        # 等待并点击“全体撤退”
-        wait_and_click_evacuate_all()
-        # 等待并点击战斗失败标识(enjoy表情)
-        wait_and_click_fail_enjoy_face()
+        # 点击“暂停战斗”
+        BasicTasks.click_pause_battle()
+        # 点击“全体撤退”
+        BasicTasks.click_evacuate_all()
+        # 点击战斗失败标识(enjoy表情)
+        BasicTasks.click_fail_enjoy_face()
 
         # 等待10秒,如果战斗失败标识(enjoy表情)出现,则说明只有一只部队在场上,会自动退出当前战场
         # 否则,说明有多只部队在场上,需要手动终止作战
         wait(10)
         if locate_image(COMMON_IMG("fail_enjoy_face")):
             print("[检测到] 任务失败:战斗失败标识(enjoy表情)")
-            # 等待并点击战斗失败标识(enjoy表情)右边600像素处
+            # 点击战斗失败标识(enjoy表情)右边600像素处
             wait_and_click(COMMON_IMG("fail_enjoy_face"), x_offset=600)
 
         else:
             print("[未检测到] 任务失败:战斗失败标识(enjoy表情)")
-            # 等待并点击终止作战-白色按钮
-            wait_and_click_cancel_battle_white()
-            # 等待并点击终止作战-橙色按钮
-            wait_and_click_cancel_battle_orange()
+            # 点击终止作战-白色按钮
+            BasicTasks.click_cancel_battle_white()
+            # 点击终止作战-橙色按钮
+            BasicTasks.click_cancel_battle_orange()
 
-        wait_and_click_confirm()
+        BasicTasks.click_confirm()
 
         result = True
 
@@ -144,22 +144,22 @@ def deal_unexpected_windows_power_low():
     if locate_image(IMG("power_low")):
         print("[检测到] 任务未正常进行:' 梯队无法满足关卡推荐效能要求'")
 
-        # 等待并点击“关闭按钮”
-        wait_and_click_close_button()
+        # 点击“关闭按钮”
+        BasicTasks.click_close_button()
 
-        # 等待并点击任务选择
-        wait_and_click_select_mission()
+        # 点击任务选择
+        BasicTasks.click_select_mission()
 
         while True:
             # 识别“是否中断计划模式”
             if locate_image(IMG("interrupt_plan_mode")):
-                wait_and_click_confirm()
+                BasicTasks.click_confirm()
                 break
 
-        # 等待并点击“任务完成”按钮
+        # 点击“任务完成”按钮
         wait_and_click_random(IMG("plan_mode_completed"))
 
-        # 等待并点击“返回”按钮
+        # 点击“返回”按钮
         wait_and_click_random(IMG("back_button"))
 
         # 确认返回主菜单

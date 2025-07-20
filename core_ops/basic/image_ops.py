@@ -1,32 +1,40 @@
 import os
 import random
+import time
 
 import pyautogui
 from pyautogui import ImageNotFoundException
 
+from config.logger_config import *
+from core_ops.basic.mouse_ops import MouseOps
+
+
 
 class ImageOps:
     """
-    图像定位工具类，提供图像识别和定位功能
+    图像定位和操作工具类，提供图像识别、定位后的鼠标操作功能
     """
 
     @staticmethod
     def locate_image(image_path, confidence=0.8):
         """
         定位图像中心点
+        :param image_path: 图片路径
+        :param confidence: 相似度阈值,0-1之间
+        :return: 图像中心点坐标 (x, y) 或 None
         """
         if not os.path.exists(image_path):
-            print(f"[图像识别] 图片不存在: {image_path}")
+            logging.error(f"[图像识别] 图片不存在: {image_path}")
             return None
 
         try:
             location = pyautogui.locateCenterOnScreen(image_path, confidence=confidence)
         except ImageNotFoundException:
-            # print(f"[图像识别] 未识别到图像 {image_path}")
+            logging.debug(f"[图像识别] 未识别到图像 {image_path}")
             return None
 
         if location:
-            print(f"[图像识别] 识别到图像 {image_path},位置：{location}")
+            logging.debug(f"[图像识别] 识别到图像 {image_path},位置：{location}")
 
         return location
 
@@ -34,16 +42,20 @@ class ImageOps:
     def locate_random_point_in_image(image_path, confidence=0.8, padding=10):
         """
         定位图像中的随机点
+        :param image_path: 图片路径
+        :param confidence: 相似度阈值,0-1之间
+        :param padding: 图像边缘的安全间距,避免点击到边缘,单位像素
+        :return: 图像内的随机点坐标 (x, y) 或 None
         """
         if not os.path.exists(image_path):
-            print(f"[图像识别] 图片不存在: {image_path}")
+            logging.error(f"[图像识别] 图片不存在: {image_path}")
             return None
 
         try:
             # 返回图像矩形区域: (left, top, width, height)
             box = pyautogui.locateOnScreen(image_path, confidence=confidence)
         except Exception as e:
-            # print(f"[图像识别] 未识别到图像 {image_path} {e}")
+            logging.debug(f"[图像识别] 未识别到图像 {image_path} {e}")
             return None
 
         if box:
@@ -54,8 +66,120 @@ class ImageOps:
             x = random.randint(box.left + max_pad_x, box.left + box.width - 1 - max_pad_x)
             y = random.randint(box.top + max_pad_y, box.top + box.height - 1 - max_pad_y)
 
-            print(f"[识别成功] 识别到图像 {image_path},随机坐标：({x}, {y})")
+            logging.debug(f"[图像识别] 识别到图像 {image_path},随机坐标：({x}, {y})")
             return pyautogui.Point(x, y)
 
-        print(f"[识别失败] 未找到图像 {image_path}")
         return None
+
+    @staticmethod
+    def wait_image(image_path, confidence=0.8, interval=0.5, timeout=-1, random_point=False, padding=10):
+        """
+        等待图像出现
+        :param image_path: 图片路径
+        :param confidence: 相似度阈值,0-1之间
+        :param interval: 等待间隔时间,单位秒
+        :param timeout: 最长等待时间（秒），-1表示无限制
+        :param random_point: 是否在返回图像内的随机位置
+        :param padding: 图像边缘的安全间距,避免点击到边缘,单位像素
+        :return: 找到图像的位置 (x, y) 或 None
+        """
+        logging.debug(f"[图像识别] 正在等待图像出现: {image_path}")
+        start_time = time.time()
+        while True:
+            if random_point:
+                location = ImageOps.locate_random_point_in_image(image_path, confidence, padding)
+            else:
+                location = ImageOps.locate_image(image_path, confidence)
+            if location:
+                logging.debug(f"[图像识别] 找到图像位置: {image_path}")
+                return location
+            if timeout != -1 and time.time() - start_time > timeout:
+                logging.warning(f"[图像识别] {timeout} 秒内未找到图像: {image_path}")
+                return None
+            time.sleep(interval)
+
+    @staticmethod
+    def find_image(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0,
+                   wait=True, interval=0.5, timeout=-1, random_point=False, padding=10,
+                   action="move"):
+        """
+        搜索或等待图像出现，然后执行指定操作（移动或点击）
+        :param image_path: 图片路径
+        :param confidence: 相似度阈值,0-1之间
+        :param duration: 移动鼠标的时间,单位秒
+        :param x_offset: x轴偏移量
+        :param y_offset: y轴偏移量
+        :param wait: 是否等待图像出现
+        :param interval: 等待间隔时间,单位秒
+        :param timeout: 最长等待时间（秒），-1表示无限制
+        :param random_point: 是否移动/点击图像内的随机位置
+        :param padding: 图像边缘的安全间距,避免点击到边缘,单位像素
+        :param action: 操作类型，"move" 表示移动鼠标，"click" 表示点击
+        :return: Boolean, True为找到并执行操作, False为未找到图像
+        """
+        logging.debug(f"[图像识别] 正在等待图像出现: {image_path}")
+        location = None
+
+        if wait:
+            location = ImageOps.wait_image(image_path, confidence, interval, timeout, random_point, padding)
+            if location is None:
+                return False  # 等待超时或未找到图像
+
+            time.sleep(0.8)  # 确保图像稳定后再操作
+        else:
+            if random_point:
+                location = ImageOps.locate_random_point_in_image(image_path, confidence, padding)
+            else:
+                location = ImageOps.locate_image(image_path, confidence)
+
+            if location is None:
+                logging.warning(f"[图像识别] 未找到图像,图像位置: {image_path}")
+                return False  # 未找到图像
+
+        # 执行操作
+        target_x = location.x + x_offset
+        target_y = location.y + y_offset
+
+        if action == "move":
+            current_x, current_y = pyautogui.position()
+            MouseOps.move_mouse_smoothly(current_x, current_y, target_x, target_y, duration=duration, overshoot=True)
+            logging.debug(f"[鼠标操作] 鼠标已移动到图像位置: {image_path}")
+        elif action == "click":
+            MouseOps.left_click_at(target_x, target_y, duration=duration)
+            logging.debug(f"[鼠标操作] 点击图像: {image_path}")
+        else:
+            logging.error(f"[鼠标操作] 未知的操作类型: {action}")
+            return False
+
+        return True
+
+    @staticmethod
+    def hold_click_until_image(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5,
+                               click_after=False):
+        """
+        持续点击直到图像出现，可以选择在图像出现后点击
+        :param image_path: 图片路径
+        :param confidence: 相似度阈值,0-1之间
+        :param duration: 鼠标移动的时间,单位秒 (仅在 click_after=True 时使用)
+        :param x_offset: x轴偏移量 (仅在 click_after=True 时使用)
+        :param y_offset: y轴偏移量 (仅在 click_after=True 时使用)
+        :param interval: 等待间隔时间,单位秒
+        :param click_after: 是否在图像出现后点击
+        :return: True (如果找到图像)
+        """
+        logging.debug(f"[图像识别] 持续点击中,并等待图像出现: {image_path}")
+        while True:
+            location = ImageOps.locate_image(image_path, confidence)
+            if location:
+                time.sleep(0.8)  # 确保图像稳定
+
+                if click_after:
+                    MouseOps.left_click_at(location.x + x_offset, location.y + y_offset, duration)
+                    logging.debug(f"[鼠标操作] 点击图像: {image_path}")
+                else:
+                    logging.debug(f"[图像识别] 确认到图像出现: {image_path}")
+
+                return True
+
+            MouseOps.one_left_click()
+            time.sleep(interval)
