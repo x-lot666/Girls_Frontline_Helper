@@ -35,3 +35,24 @@ class WindowOps:
 
         logging.debug(f"[窗口操作] 窗口“{window.title}”已被激活")
         return True
+
+    @staticmethod
+    def get_center_of_window(title_keyword):
+        """
+        获取窗口中心坐标并返回
+        """
+        windows = gw.getWindowsWithTitle(title_keyword)
+        if not windows:
+            logging.error(f"[窗口操作] 未找到包含关键字“{title_keyword}”的窗口")
+            return None
+
+        window = windows[0]
+
+        # 获取窗口位置和尺寸
+        left, top, width, height = window.left, window.top, window.width, window.height
+
+        # 计算中心坐标
+        center_x = left + width // 2
+        center_y = top + height // 2
+
+        return center_x, center_y

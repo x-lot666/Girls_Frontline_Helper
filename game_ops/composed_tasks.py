@@ -1,3 +1,5 @@
+import logging
+
 from core_ops.utils import *
 from game_ops.basic_tasks import *
 
@@ -14,6 +16,39 @@ def retire_dolls():
     ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
     BasicTasks.click_confirm()
     ImageOps.find_image(COMMON_IMG("retire"), random_point=True, action="click")
+    wait(1)  # 等待人形回收完成
+    BasicTasks.click_back_button()
+    logging.info("[人形回收] 人形回收完成")
+
+
+# 进入作战时仓库满员的人形回收，会回收3/4星人型
+def retire_dolls_3_4():
+    ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click")
+    wait(1.6)  # 等待人形回收界面加载,非常重要
+    ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
+    ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
+    BasicTasks.click_filter()
+    BasicTasks.click_filter_four_star()  # 筛选出四星人型
+    BasicTasks.click_filter_three_star()  # 筛选出三星人型
+    BasicTasks.click_confirm_filter()
+
+    # 定位到第一个三星人型，没有三星人型时，定位到第一个四星人型,选择一面的所有人型
+    if BasicTasks.click_doll_three_star() or BasicTasks.click_doll_four_star():
+        current_x, current_y = MouseOps.record_mouse_position()
+        for _ in range(5):
+            current_x += 220
+            MouseOps.left_click_at(current_x, current_y)
+        wait(0.1)
+        current_x -= 1320
+        current_y += 400
+        for _ in range(6):
+            current_x += 220
+            MouseOps.left_click_at(current_x, current_y)
+
+    BasicTasks.click_confirm()
+    ImageOps.find_image(COMMON_IMG("retire"), random_point=True, action="click")
+    # 弹出高星级回收提醒
+    BasicTasks.click_confirm()
     wait(1)  # 等待人形回收完成
     BasicTasks.click_back_button()
     logging.info("[人形回收] 人形回收完成")
@@ -87,3 +122,44 @@ def deal_unexpected_windows():
         result = True
 
     return result
+
+
+# 处理意外窗口的复合函数，会拆解3/4星人型
+def deal_unexpected_windows_retire_3_4():
+    """
+    处理意外窗口的整合函数，会拆解3/4星人型
+    当游戏出现各种意外窗口时,使画面回到主菜单,初始化画面
+    :return: result
+    """
+    # 默认值False,如果处理过意外窗口则为True
+    result1 = False
+
+    # 确保图像稳定
+    wait(0.1)
+
+    # 检测进入作战时是否出现仓库满员-----------------------------------------------------------------------------------------
+    if ImageOps.locate_image(COMMON_IMG("retire_dolls_0")):
+        logging.info("[窗口检测] 需要进行人形回收")
+        retire_dolls_3_4()
+        wait(5)
+        result1 = True
+
+    # 调用原始意外窗口的复合函数，处理其他异常
+    result2 = deal_unexpected_windows()
+
+    return result1 or result2
+
+
+# 将鼠标移动到窗口中心
+def move_to_window_center(title_keyword):
+    center_x, center_y = WindowOps.get_center_of_window(title_keyword)
+
+    if center_x is None:
+        logging.error(f"[鼠标操作] 窗口“{title_keyword}”获取失败")
+        return False
+
+    MouseOps.move_to(center_x, center_y)
+
+    logging.debug("[鼠标操作] 将鼠标移动到游戏窗口中心完成")
+
+    return True
