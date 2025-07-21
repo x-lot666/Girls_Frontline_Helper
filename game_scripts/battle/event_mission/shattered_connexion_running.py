@@ -245,7 +245,7 @@ def start_mission_actions():
     wait(0.2)
     ImageOps.find_image(IMG("team_3"), x_offset=120, y_offset=-10, action="click")
     ImageOps.find_image(COMMON_IMG("next_turn"), action="move")  # 移动鼠标到"下一回合"按钮的位置
-    for i in range(80):
+    for i in range(60):
         MouseOps.one_left_click()
     BasicTasks.click_execute_plan()  # 点击执行计划
     # 计划模式,跑步机,启动!-------------------------------------------------------------------------
