@@ -16,6 +16,9 @@ class MouseOps:
     封装鼠标操作的工具类
     """
 
+    # 按键按下到松开的延迟
+    _release_delay = 0.01
+
     @staticmethod
     def move_to(x, y, duration=0.1):
         pyautogui.moveTo(x, y, duration=duration)
@@ -49,7 +52,7 @@ class MouseOps:
     @staticmethod
     def one_left_click():
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        time.sleep(0.01)
+        time.sleep(MouseOps._release_delay)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         logging.debug(f"[鼠标操作] 左键单击")
 
@@ -57,7 +60,7 @@ class MouseOps:
     def double_left_click():
         for _ in range(2):
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-            time.sleep(0.01)
+            time.sleep(MouseOps._release_delay)
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
             time.sleep(0.05)
         logging.debug(f"[鼠标操作] 左键双击")
@@ -102,7 +105,7 @@ class MouseOps:
         current_x, current_y = pyautogui.position()  # 获取当前鼠标位置
         MouseOps.move_mouse_smoothly(current_x, current_y, x, y, duration=duration, overshoot=overshoot, plot=plot)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        time.sleep(0.01)
+        time.sleep(MouseOps._release_delay)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         logging.debug(f"[鼠标操作] 左键点击位置 ({x}, {y})")
 

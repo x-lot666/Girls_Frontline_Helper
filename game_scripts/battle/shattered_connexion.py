@@ -206,7 +206,7 @@ def main(max_actions=6):
 
             # 任务完成并且没有达到最大执行次数,重复进行任务
             if not action_limit:
-                logging.info("[灰域调查 自动执行] 重复进行任务")
+                logging.info("[裂变链接-底层归乡2 战斗EX 自动打捞] 重复进行任务")
                 logging.info(f"[计数] 当前执行次数: {action_count}")
                 repeat_mission()
                 wait(2)
