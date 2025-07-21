@@ -152,7 +152,6 @@ class BasicTasks:
     def click_deploy_button():
         ImageOps.find_image(COMMON_IMG("deploy_button"), random_point=True, action="click")
 
-
     # 点击"待机模式"
     @staticmethod
     def click_standby_mode():
@@ -162,3 +161,50 @@ class BasicTasks:
     @staticmethod
     def click_eliminate_enemy_mode():
         ImageOps.find_image(COMMON_IMG("eliminate_enemy_mode"), random_point=True, action="click")
+
+    # 点击仓库中的“确定”
+    @staticmethod
+    def click_confirm_depot():
+        ImageOps.find_image(COMMON_IMG("confirm_depot"), random_point=True, action="click")
+
+    # 点击显示种类中的“确定”
+    @staticmethod
+    def click_confirm_filter():
+        ImageOps.find_image(COMMON_IMG("confirm_filter"), random_point=True, action="click")
+
+    # 点击"队伍编成"
+    @staticmethod
+    def click_team_composition():
+        ImageOps.find_image(COMMON_IMG("team_composition"), random_point=True, action="click")
+
+    # 点击“显示种类”
+    @staticmethod
+    def click_filter():
+        ImageOps.find_image(COMMON_IMG("filter"), random_point=True, action="click")
+
+    # 点击筛选“五星”
+    @staticmethod
+    def click_filter_five_star():
+        ImageOps.find_image(COMMON_IMG("filter_five_star"), random_point=True, action="click")
+
+    # 点击筛选“四星”
+    @staticmethod
+    def click_filter_four_star():
+        ImageOps.find_image(COMMON_IMG("filter_four_star"), random_point=True, action="click")
+
+    # 点击筛选“三星”
+    @staticmethod
+    def click_filter_three_star():
+        ImageOps.find_image(COMMON_IMG("filter_three_star"), random_point=True, action="click")
+
+    # 选中四星人型
+    @staticmethod
+    def click_doll_four_star():
+        return ImageOps.find_image(COMMON_IMG("doll_four_star"),
+                                   x_offset=-50, y_offset=100, timeout=0.1, action="click")
+
+    # 选中三星人型
+    @staticmethod
+    def click_doll_three_star():
+        return ImageOps.find_image(COMMON_IMG("doll_three_star"),
+                                   x_offset=-50, y_offset=100, timeout=0.1, action="click")
