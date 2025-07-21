@@ -59,7 +59,7 @@ def menu_enter_mission():
         # 没找到就回到章节目录
         if ImageOps.locate_image(IMG("back_button")) is not None:
             ImageOps.find_image(IMG("back_button"), random_point=True, action="click")
-            wait(1.5)
+            wait(1)
         else:
             ImageOps.find_image(IMG("mark_image_logo"), action="move")
 
@@ -112,6 +112,7 @@ def start_mission_actions():
     if ImageOps.locate_image(IMG("team_1")) is None:
         # 寻找指挥部,如果没找到,就缩放地图
         if ImageOps.locate_image(IMG("hq_base"), confidence=0.70) is None:
+            ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, action="move")
             MouseOps.scroll_mouse(-1, 50)
 
         # 点击重型机场,部署第一梯队
@@ -245,7 +246,7 @@ def start_mission_actions():
     wait(0.2)
     ImageOps.find_image(IMG("team_3"), x_offset=120, y_offset=-10, action="click")
     ImageOps.find_image(COMMON_IMG("next_turn"), action="move")  # 移动鼠标到"下一回合"按钮的位置
-    for i in range(60):
+    for i in range(50):
         MouseOps.one_left_click()
     BasicTasks.click_execute_plan()  # 点击执行计划
     # 计划模式,跑步机,启动!-------------------------------------------------------------------------
@@ -293,7 +294,7 @@ def loop_mission():
     wait(0.2)
     ImageOps.find_image(IMG("team_3"), x_offset=-30, y_offset=30, action="click")
     ImageOps.find_image(COMMON_IMG("next_turn"), action="move")  # 移动鼠标到"下一回合"按钮的位置
-    for i in range(60):
+    for i in range(50):
         MouseOps.one_left_click()
     BasicTasks.click_execute_plan()  # 点击执行计划
 
@@ -316,7 +317,7 @@ def check_action_limit(action_count, max_actions):
         return True
 
 
-def main(max_actions=2):
+def main(max_actions=3):
     """
     :param max_actions: 最大执行次数
     :return:
