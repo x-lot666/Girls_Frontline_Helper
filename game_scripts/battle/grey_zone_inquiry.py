@@ -22,7 +22,7 @@ def menu_enter_mission():
     wait(1)
 
     # 点击“计划模式”
-    ImageOps.find_image(IMG("plan_mode"), random_point=True, padding=10, action="click")
+    ImageOps.find_image(IMG("plan_mode"), action="click")
 
     wait(1)
 
@@ -55,7 +55,7 @@ def repeat_mission(select_difficulty="hard_mode"):
     wait(6)
 
     # 点击“计划模式”
-    ImageOps.find_image(IMG("plan_mode"), random_point=True, padding=15, action="click")
+    ImageOps.find_image(IMG("plan_mode"), action="click")
 
     wait(1)
 

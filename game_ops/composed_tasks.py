@@ -55,7 +55,9 @@ def _handle_logistics_complete():
         logging.info("[窗口检测] 后勤界面弹出")
         ImageOps.find_image(COMMON_IMG("deploy_all"), random_point=True, action="click")
         # 有时候会跳出资源超出上限,无法再获取的提示框
-        ImageOps.find_image(COMMON_IMG("confirm"), confidence=0.75, random_point=True, action="click", timeout=3)
+        ImageOps.find_image(COMMON_IMG("confirm"), confidence=0.75, random_point=True, action="click", timeout=1)
+        wait(1)
+        ImageOps.find_image(COMMON_IMG("confirm"), confidence=0.75, random_point=True, action="click", timeout=1)
         wait(5)
         return True
     return False
