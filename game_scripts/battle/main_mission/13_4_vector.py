@@ -135,7 +135,7 @@ def exchange_vector():
 
     wait(0.5)
 
-    # 如果两只vector灾同一页则直接选择
+    # 如果两只vector在同一页则直接选择
     if ImageOps.locate_image(IMG("vector_team2"), confidence=0.9) is not None:
         ImageOps.find_image(IMG("vector_team2"), confidence=0.9, random_point=True, action="click")
     else:
