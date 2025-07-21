@@ -136,3 +136,29 @@ class BasicTasks:
     @staticmethod
     def click_battle_config():
         ImageOps.find_image(COMMON_IMG("battle_config"), random_point=True, action="click")
+
+    # 点击"下一回合"
+    @staticmethod
+    def click_next_turn():
+        ImageOps.find_image(COMMON_IMG("next_turn"), random_point=True, action="click")
+
+    # 点击"移动按钮"
+    @staticmethod
+    def click_move_button():
+        ImageOps.find_image(COMMON_IMG("move_button"), random_point=True, action="click")
+
+    # 点击"部署按钮"
+    @staticmethod
+    def click_deploy_button():
+        ImageOps.find_image(COMMON_IMG("deploy_button"), random_point=True, action="click")
+
+
+    # 点击"待机模式"
+    @staticmethod
+    def click_standby_mode():
+        ImageOps.find_image(COMMON_IMG("standby_mode"), random_point=True, action="click")
+
+    # 点击"灭敌模式"
+    @staticmethod
+    def click_eliminate_enemy_mode():
+        ImageOps.find_image(COMMON_IMG("eliminate_enemy_mode"), random_point=True, action="click")

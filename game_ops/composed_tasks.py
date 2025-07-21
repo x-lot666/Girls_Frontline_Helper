@@ -8,6 +8,7 @@ from game_ops.basic_tasks import *
 
 # 进入作战时仓库满员的人形回收
 def retire_dolls():
+    logging.info("[人形回收] 开始人形回收流程")
     ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click")
     wait(1.6)  # 等待人形回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
@@ -21,8 +22,7 @@ def retire_dolls():
 
 # 在主界面进行人形修理
 def fix_dolls():
-    logging.info("[人形修理] 检测到人形修理按钮,开始修理人形")
-
+    logging.info("[人形修理] 开始人形修理流程")
     # 点击“修理人形”
     BasicTasks.click_fix_doll()
     # 点击“一键修复”
@@ -32,43 +32,37 @@ def fix_dolls():
     wait(1)
     # 点击“返回”按钮
     BasicTasks.click_back_button()
-
     logging.info("[人形修理] 人形修理完成")
 
 
-# 处理意外窗口的复合函数
-def deal_unexpected_windows():
-    """
-    处理意外窗口的整合函数
-    当游戏出现各种意外窗口时,使画面回到主菜单,初始化画面
-    :return: result
-    """
-    # 默认值False,如果处理过意外窗口则为True
-    result = False
+# --------------------------
+# 意外窗口处理函数
+# --------------------------
 
-    # 检测进入作战时是否出现仓库满员-----------------------------------------------------------------------------------------
+def _handle_full_retire_dolls():
+    """处理仓库满员的人形回收窗口"""
     if ImageOps.locate_image(COMMON_IMG("retire_dolls_0")):
         logging.info("[窗口检测] 需要进行人形回收")
         retire_dolls()
         wait(5)
-        result = True
+        return True
+    return False
 
-    # 检测在主界面时是否出现后勤完成的界面------------------------------------------------------------------------------------
+
+def _handle_logistics_complete():
+    """处理后勤完成窗口"""
     if ImageOps.locate_image(COMMON_IMG("deploy_all")):
         logging.info("[窗口检测] 后勤界面弹出")
         ImageOps.find_image(COMMON_IMG("deploy_all"), random_point=True, action="click")
-        count = 0
         # 有时候会跳出资源超出上限,无法再获取的提示框
-        while True:
-            BasicTasks.click_confirm()
-            count += 1
-            if count >= 2:
-                break
-            wait(1)
+        ImageOps.find_image(COMMON_IMG("confirm"), confidence=0.75, random_point=True, action="click", timeout=3)
         wait(5)
-        result = True
+        return True
+    return False
 
-    # 检测在主界面时是否出现解锁成就的界面------------------------------------------------------------------------------------
+
+def _handle_achievement_unlock():
+    """处理解锁成就窗口"""
     if ImageOps.locate_image(COMMON_IMG("unlock_achievement")):
         logging.info("[窗口检测] 解锁成就界面弹出")
         ImageOps.find_image(COMMON_IMG("unlock_achievement"), y_offset=-200, random_point=True, action="click")
@@ -78,12 +72,36 @@ def deal_unexpected_windows():
             if ImageOps.locate_image(COMMON_IMG("home_battle_button")):
                 break
         wait(5)
-        result = True
+        return True
+    return False
 
-    # 检测在主界面时是否出现人形修复的界面------------------------------------------------------------------------------------
+
+def _handle_doll_repair():
+    """处理人形修复窗口"""
     if ImageOps.locate_image(COMMON_IMG("fix_doll")):
         fix_dolls()
         wait(5)
+        return True
+    return False
+
+
+# 处理意外窗口的复合函数
+def deal_unexpected_windows():
+    """
+    处理意外窗口的整合函数
+    当游戏出现各种意外窗口时,使画面回到主菜单,初始化画面
+    :return: result
+    """
+    result = False
+
+    # 依次处理各种意外窗口
+    if _handle_full_retire_dolls():
+        result = True
+    if _handle_logistics_complete():
+        result = True
+    if _handle_achievement_unlock():
+        result = True
+    if _handle_doll_repair():
         result = True
 
     return result

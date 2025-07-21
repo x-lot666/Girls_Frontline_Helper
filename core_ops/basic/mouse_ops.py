@@ -49,7 +49,7 @@ class MouseOps:
     @staticmethod
     def one_left_click():
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        time.sleep(0.01)
+        time.sleep(0.08)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         logging.debug(f"[鼠标操作] 左键单击")
 
@@ -57,18 +57,37 @@ class MouseOps:
     def double_left_click():
         for _ in range(2):
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-            time.sleep(0.01)
+            time.sleep(0.08)
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-            time.sleep(0.05)
+            time.sleep(0.1)
         logging.debug(f"[鼠标操作] 左键双击")
 
     @staticmethod
     def scroll_mouse(circles=1, repeat=1):
+        """
+        滚动鼠标滚轮
+        :param circles: 滚动圈数,每圈等于120单位,正数表示向上滚动,负数表示向下滚动
+        :param repeat: 重复滚动次数
+        """
         units = int(circles * 120)
         for _ in range(repeat):
             win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, units, 0)
             time.sleep(0.02)
-        logging.debug(f"[鼠标操作] 鼠标滚动 {circles} 圈, 重复 {repeat} 次")
+        logging.debug(f"[鼠标操作] 鼠标滚动 {circles} 圈, 重复 {repeat} 次 (Win32 API)")
+
+    @staticmethod
+    def scroll_mouse_py(circles=1, repeat=1, x=None, y=None):
+        """
+        滚动鼠标滚轮 (使用 pyautogui)
+        :param circles: 滚动圈数,正数表示向上滚动,负数表示向下滚动
+        :param repeat: 重复滚动次数 (pyautogui 内部已经有重复滚动机制，这里主要为了兼容原有接口)
+        :param x: 鼠标滚动的 x 坐标 (可选，默认为当前鼠标位置)
+        :param y: 鼠标滚动的 y 坐标 (可选，默认为当前鼠标位置)
+        """
+        for _ in range(repeat):  # 兼容原有接口，虽然 pyautogui 内部有重复滚动
+            pyautogui.scroll(int(circles * 120), x=x, y=y)
+            time.sleep(0.05)
+        logging.debug(f"[鼠标操作] 鼠标滚动 {circles} 圈, 重复 {repeat} 次 (pyautogui)")
 
     @staticmethod
     def drag_rel(dx, dy, duration=0.3):
@@ -102,7 +121,7 @@ class MouseOps:
         current_x, current_y = pyautogui.position()  # 获取当前鼠标位置
         MouseOps.move_mouse_smoothly(current_x, current_y, x, y, duration=duration, overshoot=overshoot, plot=plot)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        time.sleep(0.01)
+        time.sleep(0.08)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         logging.debug(f"[鼠标操作] 左键点击位置 ({x}, {y})")
 

@@ -4,7 +4,7 @@ from game_ops.composed_tasks import *
 溯源回归-行星环ex 自动打捞
 说明:
     - 把主力队放在第一梯队。
-    - 确保第一次进入战斗前,人形未满员(第一次不做自动回收处理”。
+    - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
     - 关闭"回合结束二次确认"和"自动补给"
 """
 
@@ -148,7 +148,7 @@ def check_action_limit(action_count, max_actions):
         final_mission()
 
 
-def main(max_actions=2):
+def main(max_actions=4):
     """
     :param max_actions: 最大执行次数
     """
