@@ -319,7 +319,7 @@ def check_action_limit(action_count, max_actions):
 
 def main(max_actions=3):
     """
-    :param max_actions: 最大执行次数
+    :param max_actions: 最大执行次数,这里设置的次数不是完成任务的次数,而是执行一轮跑步机的次数(一次完整任务=三轮跑步机)
     :return:
     """
     print_banner("[裂变链接-认知裂变1 战斗EX 跑步机自动执行] 自动化执行开始")
