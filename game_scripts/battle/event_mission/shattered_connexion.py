@@ -1,3 +1,4 @@
+from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
@@ -114,7 +115,8 @@ def start_mission_actions(repeat=False):
         # 部署第一梯队并开始作战已经在场上就直接开始作战---------------------------------------------------
         # 寻找指挥部,如果没找到,就缩放地图
         if ImageOps.locate_image(IMG("hq_base"), confidence=0.75) is None:
-            MouseOps.scroll_mouse(-1, 50)
+            move_to_window_center("少女前线")
+            MouseOps.scroll_mouse(-1, 60)
         ImageOps.find_image(IMG("hq_base"), confidence=0.75, random_point=True, action="click")
         BasicTasks.click_confirm()  # 点击确认部署
         BasicTasks.click_start_battle()  # 点击开始作战
