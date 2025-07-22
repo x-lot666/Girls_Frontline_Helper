@@ -60,7 +60,7 @@ def recycle_equipment():
     ImageOps.find_image(COMMON_IMG("recycle_equipment_0"), x_offset=-100, y_offset=0, action="click")
     ImageOps.wait_image(COMMON_IMG("recycle_UI"), confidence=0.95)
     wait(0.8)  # 等待回收界面加载,非常重要
-    ImageOps.find_image(COMMON_IMG("recycle_UI"), x_offset=-100, y_offset=-100, action="click")
+    ImageOps.find_image(COMMON_IMG("recycle_UI"), x_offset=-100, action="click")
     ImageOps.find_image(COMMON_IMG("recycle_equipment_1"), random_point=True, action="click")
     ImageOps.find_image(COMMON_IMG("confirm_recycle_equipment"), random_point=True, action="click")
     ImageOps.find_image(COMMON_IMG("retire"), random_point=True, action="click")
@@ -90,7 +90,7 @@ def fix_dolls():
 
 def _handle_full_retire_dolls():
     """处理仓库满员的人形回收窗口"""
-    if ImageOps.locate_image(COMMON_IMG("retire_dolls_0")):
+    if ImageOps.locate_image(COMMON_IMG("retire_dolls_0"), confidence=0.98):
         logging.info("[窗口检测] 需要进行人形回收")
         retire_dolls()
         wait(5)
@@ -100,7 +100,7 @@ def _handle_full_retire_dolls():
 
 def _handle_full_recycle_equipment():
     """处理仓库满员的装备回收窗口"""
-    if ImageOps.locate_image(COMMON_IMG("recycle_equipment_0")):
+    if ImageOps.locate_image(COMMON_IMG("recycle_equipment_0"), confidence=0.98):
         logging.info("[窗口检测] 需要进行装备回收")
         recycle_equipment()
         wait(5)

@@ -52,9 +52,11 @@ def menu_enter_mission(final=False):
     ImageOps.wait_image(COMMON_IMG("start_battle"))
 
     # 定位“机场”
-    if ImageOps.locate_image(IMG("airport")) is None:
-        MouseOps.scroll_mouse(-3, 50)
-    ImageOps.find_image(IMG("airport"), action="click")
+    if ImageOps.locate_image(IMG("airport"), confidence=0.70) is None:
+        ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, random_point=True, padding=30,
+                            action="move")
+        MouseOps.scroll_mouse(-3, 60)
+    ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=-40, action="click")
 
     # 点击“确定”
     BasicTasks.click_confirm()
