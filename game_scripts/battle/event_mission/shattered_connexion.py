@@ -84,6 +84,7 @@ def menu_enter_mission():
 def repeat_mission():
     """
     重复进行入任务
+    :return: True
     """
     wait(2)
     # 点击"终止作战-白色按钮"
@@ -194,7 +195,7 @@ def check_action_limit(action_count, max_actions):
         return True
 
 
-def main(max_actions=6):
+def main(max_actions=30):
     """
     :param max_actions: 最大执行次数
     :return:
@@ -220,14 +221,14 @@ def main(max_actions=6):
             if not action_limit:
                 logging.info("[裂变链接-底层归乡2 战斗EX 自动打捞] 重复进行任务")
                 logging.info(f"[计数] 当前执行次数: {action_count}")
-                repeat_mission()
+                repeat = repeat_mission()
                 wait(2)
 
                 # 处理意外窗口后,从主菜单重新开始
                 if deal_unexpected_windows():
                     break
 
-                start_mission_actions()
+                start_mission_actions(repeat)
                 action_count += 1
 
             # 任务完成并且达到最大执行次数,退出程序
