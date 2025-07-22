@@ -21,6 +21,9 @@ def menu_enter_mission(final=False):
     从主菜单进入任务
     """
 
+    # 设置缩放标记，用于记录第一次战斗由于交换人形导致缩放重置的情况
+    scroll_flag = False
+
     # 点击“首页-战斗”
     BasicTasks.click_home_battle_button()
 
@@ -55,16 +58,17 @@ def menu_enter_mission(final=False):
     ImageOps.wait_image(COMMON_IMG("start_battle"))
 
     # 寻找重型机场，如果没找到，就缩放地图
-    if ImageOps.wait_image(IMG("airport"), confidence=0.75) is None:
+    if ImageOps.wait_image(IMG("airport"), timeout=1, confidence=0.75) is None:
+        scroll_flag = True
         move_to_window_center("少女前线")
         wait(0.3)
         MouseOps.scroll_mouse(-1, 25)
 
-    # 选择指挥部部署第一梯队，保存第一梯队坐标
+    # 选择指挥部部署第一梯队
     ImageOps.find_image(IMG("headquarter"), random_point=True, action="click")
     BasicTasks.click_confirm()
 
-    # 选择重型机场部署第二梯队，保存第二梯队坐标
+    # 选择重型机场部署第二梯队
     ImageOps.find_image(IMG("airport"), confidence=0.75, random_point=True, action="click")
     ImageOps.find_image(IMG("choose_team"), timeout=1, random_point=True, action="click")
     BasicTasks.click_confirm()
@@ -72,6 +76,15 @@ def menu_enter_mission(final=False):
     wait(1)
     # 交换第一梯队和第二梯队的vector
     exchange_vector()
+
+    # 等待返回战斗页面
+    wait(2)
+
+    # 交换后重置缩放，此处
+    if scroll_flag:
+        move_to_window_center("少女前线")
+        wait(0.3)
+        MouseOps.scroll_mouse(-1, 25)
 
     # 进入作战后 到 结算页面前 的所有操作
     start_mission_actions()
@@ -98,6 +111,9 @@ def exchange_vector():
     # 点击“队伍编成”
     BasicTasks.click_team_composition()
 
+    # 等待加载
+    wait(1)
+
     # 点击vector
     ImageOps.find_image(IMG("vector"), random_point=True, action="click")
 
@@ -106,6 +122,9 @@ def exchange_vector():
     BasicTasks.click_filter_five_star()
     ImageOps.find_image(IMG("smg"), random_point=True, action="click")
     BasicTasks.click_confirm_filter()
+
+    # 等待稳定
+    wait(0.5)
 
     # 寻找仓库里的vector并换队
     while True:
@@ -116,11 +135,17 @@ def exchange_vector():
 
     wait(0.5)
 
-    while True:
-        if ImageOps.locate_image(IMG("vector_team2"), confidence=0.9) is not None:
-            ImageOps.find_image(IMG("vector_team2"), confidence=0.9, random_point=True, action="click")
-            break
-        MouseOps.scroll_mouse(-1, 5)
+    # 如果两只vector在同一页则直接选择
+    if ImageOps.locate_image(IMG("vector_team2"), confidence=0.9) is not None:
+        ImageOps.find_image(IMG("vector_team2"), confidence=0.9, random_point=True, action="click")
+    else:
+    # 不在同一页时先回滚一页，再继续往下查找
+        MouseOps.scroll_mouse(1, 5)
+        while True:
+            if ImageOps.locate_image(IMG("vector_team2"), confidence=0.9) is not None:
+                ImageOps.find_image(IMG("vector_team2"), confidence=0.9, random_point=True, action="click")
+                break
+            MouseOps.scroll_mouse(-1, 5)
 
     # 点击“确定”
     BasicTasks.click_confirm_depot()
