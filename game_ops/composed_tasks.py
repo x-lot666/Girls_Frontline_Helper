@@ -10,7 +10,8 @@ from game_ops.basic_tasks import *
 def retire_dolls():
     logging.info("[人形回收] 开始人形回收流程")
     ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click")
-    wait(1.6)  # 等待人形回收界面加载,非常重要
+    ImageOps.wait_image(COMMON_IMG("retire_dolls_1"), confidence=0.95)
+    wait(0.8)  # 等待人形回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
     ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
     BasicTasks.click_confirm()
@@ -23,7 +24,8 @@ def retire_dolls():
 # 进入作战时仓库满员的人形回收，会回收3/4星人型
 def retire_dolls_3_4():
     ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click")
-    wait(1.6)  # 等待人形回收界面加载,非常重要
+    ImageOps.wait_image(COMMON_IMG("retire_dolls_1"), confidence=0.95)
+    wait(0.8)  # 等待人形回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
     ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
     BasicTasks.click_filter()
@@ -53,6 +55,20 @@ def retire_dolls_3_4():
     logging.info("[人形回收] 人形回收完成")
 
 
+def recycle_equipment():
+    logging.info("[装备回收] 开始装备回收流程")
+    ImageOps.find_image(COMMON_IMG("recycle_equipment_0"), x_offset=-100, y_offset=0, action="click")
+    ImageOps.wait_image(COMMON_IMG("recycle_UI"), confidence=0.95)
+    wait(0.8)  # 等待回收界面加载,非常重要
+    ImageOps.find_image(COMMON_IMG("recycle_UI"), x_offset=-100, y_offset=-100, action="click")
+    ImageOps.find_image(COMMON_IMG("recycle_equipment_1"), random_point=True, action="click")
+    ImageOps.find_image(COMMON_IMG("confirm_recycle_equipment"), random_point=True, action="click")
+    ImageOps.find_image(COMMON_IMG("retire"), random_point=True, action="click")
+    wait(1)  # 等待装备回收完成
+    BasicTasks.click_back_button()
+    logging.info("[装备回收] 装备回收完成")
+
+
 # 在主界面进行人形修理
 def fix_dolls():
     logging.info("[人形修理] 开始人形修理流程")
@@ -77,6 +93,16 @@ def _handle_full_retire_dolls():
     if ImageOps.locate_image(COMMON_IMG("retire_dolls_0")):
         logging.info("[窗口检测] 需要进行人形回收")
         retire_dolls()
+        wait(5)
+        return True
+    return False
+
+
+def _handle_full_recycle_equipment():
+    """处理仓库满员的装备回收窗口"""
+    if ImageOps.locate_image(COMMON_IMG("recycle_equipment_0")):
+        logging.info("[窗口检测] 需要进行装备回收")
+        recycle_equipment()
         wait(5)
         return True
     return False
@@ -132,6 +158,8 @@ def deal_unexpected_windows():
     # 依次处理各种意外窗口
     if _handle_full_retire_dolls():
         result = True
+    if _handle_full_recycle_equipment():
+        result = True
     if _handle_logistics_complete():
         result = True
     if _handle_achievement_unlock():
@@ -166,4 +194,3 @@ def deal_unexpected_windows_retire_3_4():
     result2 = deal_unexpected_windows()
 
     return result1 or result2
-

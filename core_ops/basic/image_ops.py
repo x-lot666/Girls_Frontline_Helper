@@ -15,6 +15,9 @@ class ImageOps:
     图像定位和操作工具类，提供图像识别、定位后的鼠标操作功能
     """
 
+    # 随机定位图像时的边缘间距
+    _padding = 20
+
     @staticmethod
     def locate_image(image_path, confidence=0.8):
         """
@@ -39,7 +42,7 @@ class ImageOps:
         return location
 
     @staticmethod
-    def locate_random_point_in_image(image_path, confidence=0.8, padding=10):
+    def locate_random_point_in_image(image_path, confidence=0.8, padding=_padding):
         """
         定位图像中的随机点
         :param image_path: 图片路径
@@ -72,7 +75,7 @@ class ImageOps:
         return None
 
     @staticmethod
-    def wait_image(image_path, confidence=0.8, interval=0.5, timeout=-1, random_point=False, padding=10):
+    def wait_image(image_path, confidence=0.8, interval=0.5, timeout=-1, random_point=False, padding=_padding):
         """
         等待图像出现
         :param image_path: 图片路径
@@ -100,7 +103,7 @@ class ImageOps:
 
     @staticmethod
     def find_image(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0,
-                   wait=True, interval=0.5, timeout=-1, random_point=False, padding=10,
+                   wait=True, interval=0.5, timeout=-1, random_point=False, padding=_padding,
                    action="move"):
         """
         搜索或等待图像出现，然后执行指定操作（移动或点击）
