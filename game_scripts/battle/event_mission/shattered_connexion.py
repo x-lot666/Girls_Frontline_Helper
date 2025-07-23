@@ -1,3 +1,4 @@
+from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
@@ -84,32 +85,44 @@ def menu_enter_mission():
 def repeat_mission():
     """
     重复进行入任务
+    :return: True
     """
     wait(2)
     # 点击"终止作战-白色按钮"
     BasicTasks.click_cancel_battle_white()
     # 点击"重新作战"
     BasicTasks.click_restart_battle()
-
-
-def start_mission_actions():
-    """
-    进入作战场景后的所有操作
-    """
+    # 为什么要把 点击开始作战 移到这里?因为仓库满了后,是点了"开始作战"后才弹出的
     # 等待"开始作战"按钮出现
     ImageOps.wait_image(COMMON_IMG("start_battle"))
     wait(2)
+    # 点击开始作战
+    BasicTasks.click_start_battle()
+    return True
 
-    # 部署第一梯队并开始作战,第一梯队已经在场上(重复作战)就直接开始作战------------------------------------
-    if ImageOps.locate_image(IMG("team_1")) is None:
+
+def start_mission_actions(repeat=False):
+    """
+    进入作战场景后的所有操作
+    :param repeat: 是否是重复作战,如果是重复作战,则不需要等待"开始作战"按钮出现
+    """
+    # 如果不是重复作战(首次进入任务)
+    if not repeat:
+        # 等待"开始作战"按钮出现
+        ImageOps.wait_image(COMMON_IMG("start_battle"))
+        wait(2)
+
+        # 部署第一梯队并开始作战已经在场上就直接开始作战---------------------------------------------------
         # 寻找指挥部,如果没找到,就缩放地图
         if ImageOps.locate_image(IMG("hq_base"), confidence=0.75) is None:
-            MouseOps.scroll_mouse(-1, 50)
+            move_to_window_center("少女前线")
+            MouseOps.scroll_mouse(-1, 60)
         ImageOps.find_image(IMG("hq_base"), confidence=0.75, random_point=True, action="click")
         BasicTasks.click_confirm()  # 点击确认部署
-    BasicTasks.click_start_battle()  # 点击开始作战
+        BasicTasks.click_start_battle()  # 点击开始作战
+        # 部署第一梯队并开始作战已经在场上就直接开始作战---------------------------------------------------
+
     wait_in_range(2.2, 3)  # 等待动画加载
-    # 部署第一梯队并开始作战,第一梯队已经在场上(重复作战)就直接开始作战------------------------------------
 
     # 选中第一梯队,并补给----------------------------------------------------------------------------
     ImageOps.find_image(IMG("team_1"), x_offset=-30, y_offset=30, action="click")
@@ -146,8 +159,11 @@ def start_mission_actions():
     # 开启计划模式,让第一梯队沿着路径点执行计划-----------------------------------------------------------
     BasicTasks.click_enable_plan_mode()
     ImageOps.find_image(IMG("team_1"), x_offset=-30, y_offset=30, action="click")  # 选中team1
+    wait(0.1)
     ImageOps.find_image(IMG("team_1"), x_offset=120, y_offset=30, action="click")  # 往右一格
+    wait(0.1)
     ImageOps.find_image(IMG("team_1"), x_offset=120, y_offset=-96, action="click")  # 向右上一格
+    wait(0.1)
     ImageOps.find_image(IMG("team_1"), x_offset=-196, y_offset=-96, action="click")  # 向左上一格
     BasicTasks.click_execute_plan()
     # 开启计划模式,让第一梯队沿着路径点执行计划-----------------------------------------------------------
@@ -184,7 +200,7 @@ def check_action_limit(action_count, max_actions):
         return True
 
 
-def main(max_actions=6):
+def main(max_actions=30):
     """
     :param max_actions: 最大执行次数
     :return:
@@ -210,14 +226,14 @@ def main(max_actions=6):
             if not action_limit:
                 logging.info("[裂变链接-底层归乡2 战斗EX 自动打捞] 重复进行任务")
                 logging.info(f"[计数] 当前执行次数: {action_count}")
-                repeat_mission()
+                repeat = repeat_mission()
                 wait(2)
 
                 # 处理意外窗口后,从主菜单重新开始
                 if deal_unexpected_windows():
                     break
 
-                start_mission_actions()
+                start_mission_actions(repeat)
                 action_count += 1
 
             # 任务完成并且达到最大执行次数,退出程序

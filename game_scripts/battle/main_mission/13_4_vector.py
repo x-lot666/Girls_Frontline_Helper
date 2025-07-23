@@ -27,13 +27,13 @@ def menu_enter_mission(final=False):
     # 点击“首页-战斗”
     BasicTasks.click_home_battle_button()
 
-    # 设置成普通难度
-    ImageOps.find_image(IMG("mark_image"), x_offset=1120, y_offset=-600, action="click")
-
     # 如果能选中13-4则直接进入
     if not ImageOps.find_image(IMG("battle_13_4"), timeout=2, random_point=True, action="click"):
         # 切换至作战任务界面
         ImageOps.find_image(IMG("combat_mission"), action="click")
+
+        # 设置成普通难度
+        ImageOps.find_image(IMG("mark_image"), x_offset=1120, y_offset=-600, action="click")
 
         # 切换至作战任务界面时未选择第十三战役则退出
         if not ImageOps.find_image(IMG("battle_13_4"), timeout=2, random_point=True, action="click"):

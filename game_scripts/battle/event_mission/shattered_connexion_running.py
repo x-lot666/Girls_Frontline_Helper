@@ -7,6 +7,7 @@ from game_ops.composed_tasks import *
         - 不知道跑步机是什么或者不清楚队伍配置的话,可以参考以下链接:https://www.bilibili.com/video/BV1aJMUeHEVR
     - 确保好友支援里有白包子
     - 关闭"回合结束二次确认"和"自动补给"
+    - 进入计划模式,设置好路径后,可以隐藏游戏窗口,等全部执行后再切换回来,只有计划模式完全执行后,才会重新操作
 """
 
 # 所用的资源图片的文件夹名称
@@ -58,7 +59,7 @@ def menu_enter_mission():
         # 没找到就回到章节目录
         if ImageOps.locate_image(IMG("back_button")) is not None:
             ImageOps.find_image(IMG("back_button"), random_point=True, action="click")
-            wait(1.5)
+            wait(1)
         else:
             ImageOps.find_image(IMG("mark_image_logo"), action="move")
 
@@ -111,6 +112,7 @@ def start_mission_actions():
     if ImageOps.locate_image(IMG("team_1")) is None:
         # 寻找指挥部,如果没找到,就缩放地图
         if ImageOps.locate_image(IMG("hq_base"), confidence=0.70) is None:
+            ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, action="move")
             MouseOps.scroll_mouse(-1, 50)
 
         # 点击重型机场,部署第一梯队
@@ -244,7 +246,7 @@ def start_mission_actions():
     wait(0.2)
     ImageOps.find_image(IMG("team_3"), x_offset=120, y_offset=-10, action="click")
     ImageOps.find_image(COMMON_IMG("next_turn"), action="move")  # 移动鼠标到"下一回合"按钮的位置
-    for i in range(80):
+    for i in range(50):
         MouseOps.one_left_click()
     BasicTasks.click_execute_plan()  # 点击执行计划
     # 计划模式,跑步机,启动!-------------------------------------------------------------------------
@@ -292,7 +294,7 @@ def loop_mission():
     wait(0.2)
     ImageOps.find_image(IMG("team_3"), x_offset=-30, y_offset=30, action="click")
     ImageOps.find_image(COMMON_IMG("next_turn"), action="move")  # 移动鼠标到"下一回合"按钮的位置
-    for i in range(80):
+    for i in range(50):
         MouseOps.one_left_click()
     BasicTasks.click_execute_plan()  # 点击执行计划
 
@@ -301,12 +303,37 @@ def return_to_main_menu():
     """
     任务结束后,返回主菜单
     """
-    if ImageOps.locate_image(COMMON_IMG("repeat_battle")):
-        wait(1)
-    # 点击一次空白处
-    ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, action="click")
-    # 点击“返回按钮”
-    BasicTasks.click_back_button()
+    # 检测计划模式是否结束
+    while True:
+        # 连续10秒检测到"战斗结束标志",表示最后一次跑步完成
+        if check_image_for_10_seconds(IMG("battle_end_flag")):
+            ImageOps.find_image(IMG("battle_end_flag"), x_offset=300, y_offset=50, random_point=True, action="click")
+            wait(5)
+            break
+
+
+    while True:
+
+        #  有两种状态,如果任务刚好结束
+        if ImageOps.locate_image(COMMON_IMG("repeat_battle")):
+            wait(1)
+            # 点击一次空白处
+            ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, y_offset= -300 , action="click")
+            # 点击“返回按钮”
+            BasicTasks.click_back_button()
+            break
+
+        # 如果任务未结束,任然还在地图内
+        if ImageOps.locate_image(COMMON_IMG("cancel_battle_white")):
+            wait(1)
+            # 点击“终止作战-白色按钮”
+            ImageOps.find_image(COMMON_IMG("cancel_battle_white"), action="click")
+            # 点击“终止作战-橙色按钮”
+            ImageOps.find_image(COMMON_IMG("cancel_battle_orange"), action="click")
+            # 点击“返回按钮”
+            BasicTasks.click_back_button()
+            break
+
 
 
 # 检查执行次数是否超过限制
@@ -315,9 +342,9 @@ def check_action_limit(action_count, max_actions):
         return True
 
 
-def main(max_actions=2):
+def main(max_actions=3):
     """
-    :param max_actions: 最大执行次数
+    :param max_actions: 最大执行次数,这里设置的次数不是完成任务的次数,而是执行一轮跑步机的次数(一次完整任务=三轮跑步机)
     :return:
     """
     print_banner("[裂变链接-认知裂变1 战斗EX 跑步机自动执行] 自动化执行开始")

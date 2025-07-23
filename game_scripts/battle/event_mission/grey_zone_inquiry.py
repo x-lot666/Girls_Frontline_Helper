@@ -21,17 +21,18 @@ def menu_enter_mission():
 
     wait(1)
 
-    # 点击“计划模式”
-    ImageOps.find_image(IMG("plan_mode"), action="click")
+    while True:
+        # 如果没找到“全选按钮”,就重复点击计划模式
+        if ImageOps.find_image(IMG("select_all_button"), random_point=True, action="click", timeout=1):
+            break
+        # 点击“计划模式”
+        ImageOps.find_image(IMG("plan_mode"), action="click")
 
     wait(1)
 
     # 选择 “探查许可证 + 资源”
     if ImageOps.locate_image(IMG("select_probe_and_resource")):
         ImageOps.find_image(IMG("select_probe_and_resource"), random_point=True, action="click")
-
-    # 点击“全选按钮”
-    ImageOps.find_image(IMG("select_all_button"), random_point=True, action="click")
 
     # 点击“运行计划模式”
     ImageOps.find_image(IMG("execution_plan_mode"), random_point=True, action="click")
@@ -54,17 +55,18 @@ def repeat_mission(select_difficulty="hard_mode"):
 
     wait(6)
 
-    # 点击“计划模式”
-    ImageOps.find_image(IMG("plan_mode"), action="click")
+    while True:
+        # 如果没找到“全选按钮”,就重复点击计划模式
+        if ImageOps.find_image(IMG("select_all_button"), random_point=True, action="click", timeout=1):
+            break
+        # 点击“计划模式”
+        ImageOps.find_image(IMG("plan_mode"), action="click")
 
     wait(1)
 
     # 选择 “探查许可证 + 资源”
     if ImageOps.locate_image(IMG("select_probe_and_resource")):
         ImageOps.find_image(IMG("select_probe_and_resource"), random_point=True, action="click")
-
-    # 点击“全选按钮”
-    ImageOps.find_image(IMG("select_all_button"), random_point=True, action="click")
 
     # 点击“运行计划模式”
     ImageOps.find_image(IMG("execution_plan_mode"), random_point=True, action="click")
