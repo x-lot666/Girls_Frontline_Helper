@@ -303,12 +303,37 @@ def return_to_main_menu():
     """
     任务结束后,返回主菜单
     """
-    if ImageOps.locate_image(COMMON_IMG("repeat_battle")):
-        wait(1)
-    # 点击一次空白处
-    ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, action="click")
-    # 点击“返回按钮”
-    BasicTasks.click_back_button()
+    # 检测计划模式是否结束
+    while True:
+        # 连续10秒检测到"战斗结束标志",表示最后一次跑步完成
+        if check_image_for_10_seconds(IMG("battle_end_flag")):
+            ImageOps.find_image(IMG("battle_end_flag"), x_offset=300, y_offset=50, random_point=True, action="click")
+            wait(5)
+            break
+
+
+    while True:
+
+        #  有两种状态,如果任务刚好结束
+        if ImageOps.locate_image(COMMON_IMG("repeat_battle")):
+            wait(1)
+            # 点击一次空白处
+            ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, y_offset= -300 , action="click")
+            # 点击“返回按钮”
+            BasicTasks.click_back_button()
+            break
+
+        # 如果任务未结束,任然还在地图内
+        if ImageOps.locate_image(COMMON_IMG("cancel_battle_white")):
+            wait(1)
+            # 点击“终止作战-白色按钮”
+            ImageOps.find_image(COMMON_IMG("cancel_battle_white"), action="click")
+            # 点击“终止作战-橙色按钮”
+            ImageOps.find_image(COMMON_IMG("cancel_battle_orange"), action="click")
+            # 点击“返回按钮”
+            BasicTasks.click_back_button()
+            break
+
 
 
 # 检查执行次数是否超过限制

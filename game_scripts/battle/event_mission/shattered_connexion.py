@@ -159,8 +159,11 @@ def start_mission_actions(repeat=False):
     # 开启计划模式,让第一梯队沿着路径点执行计划-----------------------------------------------------------
     BasicTasks.click_enable_plan_mode()
     ImageOps.find_image(IMG("team_1"), x_offset=-30, y_offset=30, action="click")  # 选中team1
+    wait(0.1)
     ImageOps.find_image(IMG("team_1"), x_offset=120, y_offset=30, action="click")  # 往右一格
+    wait(0.1)
     ImageOps.find_image(IMG("team_1"), x_offset=120, y_offset=-96, action="click")  # 向右上一格
+    wait(0.1)
     ImageOps.find_image(IMG("team_1"), x_offset=-196, y_offset=-96, action="click")  # 向左上一格
     BasicTasks.click_execute_plan()
     # 开启计划模式,让第一梯队沿着路径点执行计划-----------------------------------------------------------
