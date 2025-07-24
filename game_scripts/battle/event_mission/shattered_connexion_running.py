@@ -252,18 +252,6 @@ def start_mission_actions():
     # 计划模式,跑步机,启动!-------------------------------------------------------------------------
 
 
-def check_image_for_10_seconds(image_path):
-    """
-    持续检测图像 10 秒，如果一直存在则返回 True，否则返回 False。
-    """
-    start_time = time.time()
-    while time.time() - start_time < 10:
-        time.sleep(1)
-        if not ImageOps.locate_image(image_path):
-            return False  # 只要有一次没找到，就立即返回 False
-    return True
-
-
 def loop_mission():
     """
     持续执行跑步机任务,直到战斗结束
@@ -275,7 +263,7 @@ def loop_mission():
         if ImageOps.locate_image(COMMON_IMG("repeat_battle")):
             return True
         # 连续10秒检测到"战斗结束标志",表示一次跑步完成
-        if check_image_for_10_seconds(IMG("battle_end_flag")):
+        if ImageOps.is_image_stable_for_seconds(IMG("battle_end_flag"), check_time=10, interval=1):
             break
     ImageOps.find_image(IMG("battle_end_flag"), x_offset=300, y_offset=50, random_point=True, action="click")
     wait(8)  # 等待战斗结束动画
@@ -306,11 +294,10 @@ def return_to_main_menu():
     # 检测计划模式是否结束
     while True:
         # 连续10秒检测到"战斗结束标志",表示最后一次跑步完成
-        if check_image_for_10_seconds(IMG("battle_end_flag")):
+        if ImageOps.is_image_stable_for_seconds(IMG("battle_end_flag"), check_time=10, interval=1):
             ImageOps.find_image(IMG("battle_end_flag"), x_offset=300, y_offset=50, random_point=True, action="click")
             wait(5)
             break
-
 
     while True:
 
@@ -318,7 +305,7 @@ def return_to_main_menu():
         if ImageOps.locate_image(COMMON_IMG("repeat_battle")):
             wait(1)
             # 点击一次空白处
-            ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, y_offset= -300 , action="click")
+            ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, y_offset=-300, action="click")
             # 点击“返回按钮”
             BasicTasks.click_back_button()
             break
@@ -333,7 +320,6 @@ def return_to_main_menu():
             # 点击“返回按钮”
             BasicTasks.click_back_button()
             break
-
 
 
 # 检查执行次数是否超过限制

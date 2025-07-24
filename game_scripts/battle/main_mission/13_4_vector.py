@@ -100,7 +100,7 @@ def menu_enter_mission(final=False):
 
     # 由于结算时会弹出获取人形的界面,需要等结算完毕后点击一次
     # 持续点击,直到出现“再次作战”
-    ImageOps.hold_click_until_image(COMMON_IMG("repeat_battle"), click_after=True)
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), click_after=True)
 
 
 # 交换第一梯队和第二梯队的vector
@@ -202,7 +202,7 @@ def final_mission():
     # 等待任务结束
     ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, action="move")
     # 返回主菜单
-    ImageOps.hold_click_until_image(COMMON_IMG("back_button"), click_after=True)
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), click_after=True)
     logging.info(f"[终止] 已达到最大执行次数")
     print_banner("[13-4 双vector拖尸] 自动化执行结束")
 
@@ -227,7 +227,7 @@ def repeat_mission():
 
     # 由于结算时会弹出获取人形的界面,需要等结算完毕后点击一次
     # 持续点击,直到出现“再次作战”
-    ImageOps.hold_click_until_image(COMMON_IMG("repeat_battle"), click_after=True)
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), click_after=True)
 
 
 def check_action_limit(action_count, max_actions):

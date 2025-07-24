@@ -143,7 +143,7 @@ def start_mission_actions(repeat=False):
     # 结束回合,并等待战斗结束-------------------------------------------------------------------------
     BasicTasks.click_end_round_button()  # 点击结束回合
     ImageOps.find_image(IMG("battle_end_flag"), x_offset=200, y_offset=300, action="move")  # 移动到战斗结束标志
-    ImageOps.hold_click_until_image(COMMON_IMG("mark_image_794"), interval=0.8)  # 持续点击直到794(战斗结束的标识)出现
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("mark_image_794"), interval=0.8)  # 持续点击直到794(战斗结束的标识)出现
     wait_in_range(8.5, 9.5)
     # 结束回合,并等待战斗结束-------------------------------------------------------------------------
 
@@ -174,7 +174,7 @@ def start_mission_actions(repeat=False):
         share_button = ImageOps.locate_image(COMMON_IMG("share_button"))
         if share_button is not None:
             MouseOps.move_to(share_button.x + 200, share_button.y + 300)
-            ImageOps.hold_click_until_image(COMMON_IMG("mark_image_794"), interval=0.8)  # 持续点击直到794(战斗结束的标识)出现
+            ImageOps.hold_click_until_image_appear(COMMON_IMG("mark_image_794"), interval=0.8)  # 持续点击直到794(战斗结束的标识)出现
 
         # 等待战斗结束
         if ImageOps.locate_image(IMG("mission_completed_mark"), confidence=0.95) is not None:

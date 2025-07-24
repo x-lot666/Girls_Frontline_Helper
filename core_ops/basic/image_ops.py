@@ -9,7 +9,6 @@ from config.logger_config import *
 from core_ops.basic.mouse_ops import MouseOps
 
 
-
 class ImageOps:
     """
     图像定位和操作工具类，提供图像识别、定位后的鼠标操作功能
@@ -157,8 +156,8 @@ class ImageOps:
         return True
 
     @staticmethod
-    def hold_click_until_image(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5,
-                               click_after=False):
+    def hold_click_until_image_appear(image_path, confidence=0.8, duration=0.1, x_offset=0, y_offset=0, interval=0.5,
+                                      timeout=-1, click_after=False):
         """
         持续点击直到图像出现，可以选择在图像出现后点击
         :param image_path: 图片路径
@@ -167,11 +166,18 @@ class ImageOps:
         :param x_offset: x轴偏移量 (仅在 click_after=True 时使用)
         :param y_offset: y轴偏移量 (仅在 click_after=True 时使用)
         :param interval: 等待间隔时间,单位秒
+        :param timeout: 等待超时时间，单位秒，-1 表示无限等待
         :param click_after: 是否在图像出现后点击
-        :return: True (如果找到图像)
+        :return: True (如果找到图像)，False（超时未找到）
         """
         logging.debug(f"[图像识别] 持续点击中,并等待图像出现: {image_path}")
+        start_time = time.time()
+
         while True:
+            if timeout != -1 and (time.time() - start_time) >= timeout:
+                logging.warning(f"[图像识别] 等待图像出现超时: {image_path}")
+                return False
+
             location = ImageOps.locate_image(image_path, confidence)
             if location:
                 time.sleep(0.8)  # 确保图像稳定
@@ -186,3 +192,50 @@ class ImageOps:
 
             MouseOps.one_left_click()
             time.sleep(interval)
+
+    @staticmethod
+    def hold_click_until_image_disappears(image_path, confidence=0.8, interval=0.5, timeout=-1, x=None, y=None):
+        """
+        持续点击直到图像消失，可选在点击前将鼠标移动到指定位置。
+        :param image_path: 图片路径
+        :param confidence: 图像识别相似度阈值 (0-1)
+        :param interval: 点击与检测的间隔秒数
+        :param timeout: 最长等待时间（秒），-1表示无限制
+        :param x: 可选，点击前鼠标移动到的X坐标
+        :param y: 可选，点击前鼠标移动到的Y坐标
+        :return: True（图像已消失）或 False（超时仍未消失）
+        """
+        logging.debug(f"[图像识别] 持续点击并等待图像消失: {image_path}")
+        start_time = time.time()
+
+        while True:
+            location = ImageOps.locate_image(image_path, confidence)
+            if not location:
+                logging.debug(f"[图像识别] 图像已消失: {image_path}")
+                return True
+
+            if x is not None and y is not None:
+                MouseOps.move_to(x, y)  # 鼠标移动到指定位置
+
+            MouseOps.one_left_click()
+            time.sleep(interval)
+
+            if timeout != -1 and timeout is not None and (time.time() - start_time) >= timeout:
+                logging.warning(f"[图像识别] 等待图像消失超时: {image_path}")
+                return False
+
+    @staticmethod
+    def is_image_stable_for_seconds(image_path, confidence=0.8, check_time=10, interval=0.5):
+        """
+        持续检测图像 x 秒，如果一直存在则返回 True，否则返回 False。
+        :param image_path: 图片路径
+        :param confidence: 图像识别相似度阈值 (0-1)
+        :param check_time: 检测时间，单位秒
+        :param interval: 检测间隔时间，单位秒
+        """
+        start_time = time.time()
+        while time.time() - start_time < check_time:
+            time.sleep(interval)
+            if not ImageOps.locate_image(image_path, confidence):
+                return False  # 只要有一次没找到，就立即返回 False
+        return True

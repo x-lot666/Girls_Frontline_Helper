@@ -1,3 +1,5 @@
+import traceback
+
 from game_ops.composed_tasks import *
 
 """
@@ -31,8 +33,7 @@ def menu_enter_mission():
     wait(1)
 
     # 选择 “探查许可证 + 资源”
-    if ImageOps.locate_image(IMG("select_probe_and_resource")):
-        ImageOps.find_image(IMG("select_probe_and_resource"), random_point=True, action="click")
+    ImageOps.find_image(IMG("cost_type"), y_offset=90, action="click")
 
     # 点击“运行计划模式”
     ImageOps.find_image(IMG("execution_plan_mode"), random_point=True, action="click")
@@ -65,8 +66,7 @@ def repeat_mission(select_difficulty="hard_mode"):
     wait(1)
 
     # 选择 “探查许可证 + 资源”
-    if ImageOps.locate_image(IMG("select_probe_and_resource")):
-        ImageOps.find_image(IMG("select_probe_and_resource"), random_point=True, action="click")
+    ImageOps.find_image(IMG("cost_type"), y_offset=90, action="click")
 
     # 点击“运行计划模式”
     ImageOps.find_image(IMG("execution_plan_mode"), random_point=True, action="click")
@@ -81,9 +81,9 @@ def deal_unexpected_windows_mission_completed():
     # 默认值False,如果处理过意外窗口则为True
     result = False
 
-    # 检测 任务完成
-    if ImageOps.locate_image(IMG("plan_mode_completed")):
-        ImageOps.find_image(IMG("plan_mode_completed"), random_point=True, action="click")
+    # 持续检测 任务完成的标识出现,如果有其他窗口覆盖掉,则返回主循环中处理其他窗口
+    if ImageOps.is_image_stable_for_seconds(IMG("plan_mode_completed"), confidence=0.92, check_time=3):
+        ImageOps.find_image(IMG("plan_mode_completed"), confidence=0.92, random_point=True, action="click")
         result = True
 
     return result
@@ -104,20 +104,23 @@ def deal_unexpected_windows_mission_failed():
 
         # 点击“关闭按钮”
         BasicTasks.click_close_button()
-        # 点击“重新战斗”
-        BasicTasks.click_retry_battle()
-        wait(1.5)
-        # 点击“暂停战斗”
-        BasicTasks.click_pause_battle()
-        # 点击“全体撤退”
-        BasicTasks.click_evacuate_all()
-        # 点击战斗失败标识(enjoy表情)
-        BasicTasks.click_fail_enjoy_face()
+
+        # 有两种情况:被打到剩最后一只人形,或者是直接任务失败(小怪走到终点了,通常触发于代理模式下的弹药耗尽,后者人形会被重创)
+        # 本来是在这里做个判断的,后来想想还是视为一种情况处理,都重新回到主菜单,看看需不需要修复人形
+        if ImageOps.wait_image(COMMON_IMG("retry_battle"), timeout=2):
+            # 点击“重新战斗”
+            BasicTasks.click_retry_battle()
+            wait(1.5)
+            # 点击“暂停战斗”
+            BasicTasks.click_pause_battle()
+            # 点击“全体撤退”
+            BasicTasks.click_evacuate_all()
+            # 点击战斗失败标识(enjoy表情)
+            BasicTasks.click_fail_enjoy_face()
 
         # 等待10秒,如果战斗失败标识(enjoy表情)出现,则说明只有一只部队在场上,会自动退出当前战场
         # 否则,说明有多只部队在场上,需要手动终止作战
-        wait(10)
-        if ImageOps.locate_image(COMMON_IMG("fail_enjoy_face")):
+        if ImageOps.wait_image(COMMON_IMG("fail_enjoy_face"), timeout=8):
             logging.info("[窗口检测] 任务失败:战斗失败标识(enjoy表情)")
             # 点击战斗失败标识(enjoy表情)右边600像素处
             ImageOps.find_image(COMMON_IMG("fail_enjoy_face"), x_offset=600, action="click")
@@ -130,6 +133,18 @@ def deal_unexpected_windows_mission_failed():
             BasicTasks.click_cancel_battle_orange()
 
         BasicTasks.click_confirm()
+
+        #进入修复人形流程
+        # 点击“任务完成”按钮
+        ImageOps.find_image(IMG("plan_mode_completed"), random_point=True, action="click")
+
+        # 点击“返回”按钮
+        ImageOps.find_image(IMG("back_button"), random_point=True, action="click")
+
+        wait(5)
+
+        # 返回主菜单后处理意外窗口
+        deal_unexpected_windows()
 
         result = True
 
@@ -168,13 +183,11 @@ def deal_unexpected_windows_power_low():
         ImageOps.find_image(IMG("back_button"), random_point=True, action="click")
 
         # 确认返回主菜单
-        while True:
-            if ImageOps.locate_image(COMMON_IMG("home_battle_button")):
-                break
 
-        if ImageOps.locate_image(COMMON_IMG("fix_doll")):
-            # 检测到人形修复按钮,进入修复人形流程
-            fix_dolls()
+        wait(5)
+
+        # 返回主菜单后处理意外窗口
+        deal_unexpected_windows()
 
         result = True
 
@@ -217,8 +230,9 @@ def main(max_actions=3, select_difficulty="hard_mode"):
             if deal_unexpected_windows():
                 break
 
-            # 处理任务失败的情况
-            deal_unexpected_windows_mission_failed()
+            # 处理任务失败的情况,回到主菜单看看需不需要修复人形
+            if deal_unexpected_windows_mission_failed():
+                break
 
             # 处理任务未正常进行的情况:梯队无法满足关卡推荐效能要求
             if deal_unexpected_windows_power_low():
@@ -244,4 +258,7 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as e:
-        logging.error(f"[异常] 程序发生错误: {e}")
+        error_message = f"[异常] 程序发生错误: {e}"
+        logging.error(error_message)
+        trace = traceback.format_exc()  # 获取堆栈跟踪的字符串表示
+        logging.error(trace)
