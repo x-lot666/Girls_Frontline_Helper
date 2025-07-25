@@ -152,13 +152,12 @@ def _handle_reward_window():
     在灰域调查中,代理作战的时候刚好人形满员导致退出代理模式,并且点数刚好触发奖励,才会弹出此窗口
     由于是人形满员的窗口先弹出,所以这个窗口会被忽略掉
     目前来看只能在回收人形里来解决(添加超时机制,避免卡在回收人形的过程中)
+    并且,处理此窗口,不返回True,因为点此窗口后,会停留在当前界面,而不是回到主菜单
     """
     if ImageOps.locate_image(COMMON_IMG("reward_window")):
         logging.info("[窗口检测] 领取奖励界面弹出")
-        ImageOps.find_image(COMMON_IMG("reward_window"), x_offset=600, random_point=True, action="click")
+        ImageOps.find_image(COMMON_IMG("reward_window"), x_offset=600, y_offset=-180, action="click", timeout=2)
         wait(1)
-        return True
-    return False
 
 
 def _handle_doll_repair():
