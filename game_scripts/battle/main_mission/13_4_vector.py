@@ -60,7 +60,7 @@ def menu_enter_mission(final=False):
     # 寻找重型机场，如果没找到，就缩放地图
     if ImageOps.wait_image(IMG("airport"), timeout=1, confidence=0.75) is None:
         scroll_flag = True
-        move_to_window_center("少女前线")
+        WindowOps.move_to_window_center("少女前线")
         wait(0.3)
         MouseOps.scroll_mouse(-1, 25)
 
@@ -82,7 +82,7 @@ def menu_enter_mission(final=False):
 
     # 交换后重置缩放，此处
     if scroll_flag:
-        move_to_window_center("少女前线")
+        WindowOps.move_to_window_center("少女前线")
         wait(0.3)
         MouseOps.scroll_mouse(-1, 25)
 
