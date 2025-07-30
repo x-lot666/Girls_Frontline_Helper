@@ -9,8 +9,14 @@ from game_ops.basic_tasks import *
 # 进入作战时仓库满员的人形回收
 def retire_dolls():
     logging.info("[人形回收] 开始人形回收流程")
-    ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click")
-    ImageOps.wait_image(COMMON_IMG("retire_dolls_1"), confidence=0.95)
+    # 此处这样处理是因为有时候人形回收入口会被其他界面遮挡,导致无法定位到
+    # 详细见_handle_reward_window()函数
+    if not ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click", timeout=5):
+        logging.info("[人形回收] 未定位到人形回收入口,可能被其他界面遮挡")
+        return
+    if not ImageOps.wait_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, timeout=5):
+        logging.info("[人形回收] 未定位到人形回收入口,可能被其他界面遮挡")
+        return
     wait(0.8)  # 等待人形回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
     ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
@@ -57,7 +63,9 @@ def retire_dolls_3_4():
 
 def recycle_equipment():
     logging.info("[装备回收] 开始装备回收流程")
-    ImageOps.find_image(COMMON_IMG("recycle_equipment_0"), x_offset=-100, y_offset=0, action="click")
+    if not ImageOps.find_image(COMMON_IMG("recycle_equipment_0"), x_offset=-100, y_offset=0, action="click", timeout=5):
+        logging.info("[装备回收] 未定位到装备回收入口,可能被其他界面遮挡")
+        return
     ImageOps.wait_image(COMMON_IMG("recycle_UI"), confidence=0.95)
     wait(0.8)  # 等待回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("recycle_UI"), x_offset=-100, action="click")
@@ -137,6 +145,21 @@ def _handle_achievement_unlock():
     return False
 
 
+def _handle_reward_window():
+    """
+    处理奖励窗口
+    目前发现该窗口只会在特定情况下弹出:
+    在灰域调查中,代理作战的时候刚好人形满员导致退出代理模式,并且点数刚好触发奖励,才会弹出此窗口
+    由于是人形满员的窗口先弹出,所以这个窗口会被忽略掉
+    目前来看只能在回收人形里来解决(添加超时机制,避免卡在回收人形的过程中)
+    并且,处理此窗口,不返回True,因为点此窗口后,会停留在当前界面,而不是回到主菜单
+    """
+    if ImageOps.locate_image(COMMON_IMG("reward_window")):
+        logging.info("[窗口检测] 领取奖励界面弹出")
+        ImageOps.find_image(COMMON_IMG("reward_window"), x_offset=600, y_offset=-180, action="click", timeout=2)
+        wait(1)
+
+
 def _handle_doll_repair():
     """处理人形修复窗口"""
     if ImageOps.locate_image(COMMON_IMG("fix_doll")):
@@ -149,23 +172,35 @@ def _handle_doll_repair():
 # 处理意外窗口的复合函数
 def deal_unexpected_windows():
     """
-    处理意外窗口的整合函数
-    当游戏出现各种意外窗口时,使画面回到主菜单,初始化画面
-    :return: result
+    处理意外窗口的整合函数。
+    当游戏出现各种意外窗口时，依次处理它们，同时添加超时机制，只要处理过一个就重新开始检查，直到一个也没有为止。
+    这样可以确保所有意外窗口都被处理(不然很可能因为顺序问题,导致多个窗口同时触发出现少处理的情况)。
+    :return: 是否处理过任何意外窗口（True 表示处理过至少一个）
     """
     result = False
 
-    # 依次处理各种意外窗口
-    if _handle_full_retire_dolls():
-        result = True
-    if _handle_full_recycle_equipment():
-        result = True
-    if _handle_logistics_complete():
-        result = True
-    if _handle_achievement_unlock():
-        result = True
-    if _handle_doll_repair():
-        result = True
+    while True:
+        handled = False  # 当前轮次是否处理了窗口
+
+        # 依次处理各种意外窗口
+        if _handle_full_retire_dolls():
+            handled = True
+        elif _handle_full_recycle_equipment():
+            handled = True
+        elif _handle_reward_window():
+            handled = True
+        elif _handle_logistics_complete():
+            handled = True
+        elif _handle_achievement_unlock():
+            handled = True
+        elif _handle_doll_repair():
+            handled = True
+
+        if handled:
+            result = True
+            continue  # 回到开头，重新检查所有窗口
+        else:
+            break  # 当前轮次没有处理任何窗口，说明已经没有意外窗口了
 
     return result
 

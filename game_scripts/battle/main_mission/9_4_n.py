@@ -92,7 +92,7 @@ def start_mission_actions():
 
     # 关闭结算画面
     if ImageOps.find_image(IMG("battle_end_flag"), x_offset=500, action="click"):
-        ImageOps.hold_click_until_image(COMMON_IMG("end_round_button"))
+        ImageOps.hold_click_until_image_appear(COMMON_IMG("end_round_button"))
 
     # 部署第二梯队,并补给----------------------------------------------------------------------------
     # 清除选择
@@ -145,7 +145,7 @@ def start_mission_actions():
     wait(0.5)
 
     # 持续点击,直到“再次作战”再次出现
-    ImageOps.hold_click_until_image(COMMON_IMG("repeat_battle"), interval=1)
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), interval=1)
 
 
 def return_to_main_menu():
@@ -158,7 +158,7 @@ def return_to_main_menu():
     ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, action="click")
 
     # 点击“返回按钮”
-    ImageOps.hold_click_until_image(COMMON_IMG("back_button"), interval=0.5, click_after=True)
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), interval=0.5, click_after=True)
 
 
 # 检查执行次数是否超过限制
