@@ -115,7 +115,7 @@ def start_mission_actions(repeat=False):
         # 部署第一梯队并开始作战已经在场上就直接开始作战---------------------------------------------------
         # 寻找指挥部,如果没找到,就缩放地图
         if ImageOps.locate_image(IMG("hq_base"), confidence=0.75) is None:
-            move_to_window_center("少女前线")
+            WindowOps.move_to_window_center("少女前线")
             MouseOps.scroll_mouse(-1, 60)
         ImageOps.find_image(IMG("hq_base"), confidence=0.75, random_point=True, action="click")
         BasicTasks.click_confirm()  # 点击确认部署
@@ -206,7 +206,10 @@ def main(max_actions=30):
     :return:
     """
     print_banner("[裂变链接-底层归乡2 战斗EX 自动打捞] 自动化执行开始")
-    WindowOps.activate_window("少女前线")  # 激活游戏窗口
+    # 激活游戏窗口,如果失败则自动打开少女前线
+    if not launch_gf():
+        logging.error("[启动异常] 启动游戏失败")
+        exit()
     action_count = 1  # 初始化执行计数
     action_limit = False
 
