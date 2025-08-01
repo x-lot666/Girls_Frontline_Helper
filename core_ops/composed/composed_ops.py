@@ -27,15 +27,28 @@ def launch_gf():
                 # 出现登入按钮,则点击
                 if ImageOps.locate_image(COMMON_IMG("login_button")):
                     ImageOps.find_image(COMMON_IMG("login_button"), action="click")
+                    continue
+
+                # 出现返回按钮1,则点击(一般出现于初次登入后活动界面弹出)
+                if ImageOps.locate_image(COMMON_IMG("back_button_1"), confidence=0.7):
+                    ImageOps.find_image(COMMON_IMG("back_button_1"), confidence=0.7, action="click")
+                    continue
+
+                # 出现返回按钮2,则点击(一般出现于初次登入后活动界面弹出)
+                if ImageOps.locate_image(COMMON_IMG("back_button_2"), confidence=0.7):
+                    ImageOps.find_image(COMMON_IMG("back_button_2"), confidence=0.7, action="click")
+                    continue
+
 
                 # 确认进入主菜单后,退出循环
-                if ImageOps.locate_image(COMMON_IMG("home_battle_button")):
+                if ImageOps.is_image_stable_for_seconds(COMMON_IMG("home_battle_button"), check_time=3):
                     break
 
                 # 如果没有找到登入按钮,则点击窗口中心
                 WindowOps.move_to_window_center("少女前线")
+                MouseOps.move_mouse(0, 360)
                 MouseOps.one_left_click()
-                wait(2)
+                wait(1)
 
         return True
 
