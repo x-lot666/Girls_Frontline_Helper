@@ -29,7 +29,7 @@ def menu_enter_mission():
         # 点击“计划模式”
         ImageOps.find_image(IMG("plan_mode"), action="click")
 
-    wait(1)
+    wait(2)
 
     # 选择 “探查许可证 + 资源”
     ImageOps.find_image(IMG("cost_type"), y_offset=90, action="click")
@@ -62,7 +62,7 @@ def repeat_mission(select_difficulty="hard_mode"):
         # 点击“计划模式”
         ImageOps.find_image(IMG("plan_mode"), action="click")
 
-    wait(1)
+    wait(2)
 
     # 选择 “探查许可证 + 资源”
     ImageOps.find_image(IMG("cost_type"), y_offset=90, action="click")
