@@ -206,7 +206,10 @@ def main(max_actions=30):
     :return:
     """
     print_banner("[裂变链接-底层归乡2 战斗EX 自动打捞] 自动化执行开始")
-    WindowOps.activate_window("少女前线")  # 激活游戏窗口
+    # 激活游戏窗口,如果失败则自动打开少女前线
+    if not launch_gf():
+        logging.error("[启动异常] 启动游戏失败")
+        exit()
     action_count = 1  # 初始化执行计数
     action_limit = False
 

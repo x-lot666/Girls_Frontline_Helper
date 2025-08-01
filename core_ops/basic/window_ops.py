@@ -16,6 +16,15 @@ class WindowOps:
     """
 
     @staticmethod
+    def window_exists(title_keyword):
+        """
+        检测是否存在包含指定关键字的窗口。
+        :return: True 如果存在包含关键字的窗口，否则返回 False。
+        """
+        windows = gw.getWindowsWithTitle(title_keyword)
+        return bool(windows)  # 如果列表不为空，则返回 True，否则返回 False
+
+    @staticmethod
     def activate_window(title_keyword):
         """
         激活并短暂置顶包含指定关键字的窗口，使其出现在最前面一次
