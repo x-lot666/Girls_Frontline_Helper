@@ -18,63 +18,72 @@ class WindowOps:
     @staticmethod
     def window_exists(title_keyword):
         """
-        检测是否存在包含指定关键字的窗口。
-        :return: True 如果存在包含关键字的窗口，否则返回 False。
+        检测是否存在指定标题的窗口。
+        :param title_keyword: 窗口标题。
+        :return: True 如果存在指定标题的窗口，否则返回 False。
         """
-        windows = gw.getWindowsWithTitle(title_keyword)
-        return bool(windows)  # 如果列表不为空，则返回 True，否则返回 False
+        try:
+            window = gw.getWindowsWithTitle(title_keyword)[0]  # 尝试获取第一个匹配的窗口
+            return window is not None and window.title == title_keyword  # 确保标题完全匹配
+        except IndexError:
+            return False  # 没有找到任何匹配的窗口
 
     @staticmethod
     def activate_window(title_keyword):
         """
-        激活并短暂置顶包含指定关键字的窗口，使其出现在最前面一次
+        激活并短暂置顶指定标题的窗口，使其出现在最前面一次。
         """
-        windows = gw.getWindowsWithTitle(title_keyword)
-        if not windows:
-            logging.error(f"[窗口操作] 未找到包含关键字“{title_keyword}”的窗口")
+        try:
+            window = gw.getWindowsWithTitle(title_keyword)[0]  # 尝试获取第一个匹配的窗口
+            if window.title != title_keyword:
+                logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
+                return False
+
+            hwnd = window._hWnd
+
+            if window.isMinimized:
+                win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+
+            # 强制置顶 + 激活窗口
+            win32gui.SetForegroundWindow(hwnd)
+            win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0,
+                                  win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+            win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
+                                  win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+
+            logging.debug(f"[窗口操作] 窗口“{window.title}”已被激活")
+            return True
+        except IndexError:
+            logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
             return False
-
-        window = windows[0]
-        hwnd = window._hWnd
-
-        if window.isMinimized:
-            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-
-        # 强制置顶 + 激活窗口
-        win32gui.SetForegroundWindow(hwnd)
-        win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0,
-                              win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-        win32gui.SetWindowPos(hwnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0,
-                              win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-
-        logging.debug(f"[窗口操作] 窗口“{window.title}”已被激活")
-        return True
 
     @staticmethod
     def get_center_of_window(title_keyword):
         """
-        获取窗口中心坐标并返回
+        获取指定标题窗口的中心坐标并返回。
         """
-        windows = gw.getWindowsWithTitle(title_keyword)
-        if not windows:
-            logging.error(f"[窗口操作] 未找到包含关键字“{title_keyword}”的窗口")
+        try:
+            window = gw.getWindowsWithTitle(title_keyword)[0]  # 尝试获取第一个匹配的窗口
+            if window.title != title_keyword:
+                logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
+                return None
+
+            # 获取窗口位置和尺寸
+            left, top, width, height = window.left, window.top, window.width, window.height
+
+            # 计算中心坐标
+            center_x = left + width // 2
+            center_y = top + height // 2
+
+            return center_x, center_y
+        except IndexError:
+            logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
             return None
-
-        window = windows[0]
-
-        # 获取窗口位置和尺寸
-        left, top, width, height = window.left, window.top, window.width, window.height
-
-        # 计算中心坐标
-        center_x = left + width // 2
-        center_y = top + height // 2
-
-        return center_x, center_y
 
     @staticmethod
     def move_to_window_center(title_keyword):
         """
-        将鼠标移动到包含指定关键字的窗口中心。
+        将鼠标移动到指定标题窗口的中心。
         """
         center_x, center_y = WindowOps.get_center_of_window(title_keyword)
 
@@ -110,46 +119,52 @@ class WindowOps:
     @staticmethod
     def close_window(title_keyword):
         """
-        关闭包含指定关键字的窗口的应用程序。
+        关闭指定标题的窗口的应用程序。
         """
-        windows = gw.getWindowsWithTitle(title_keyword)
-        if not windows:
-            logging.error(f"[窗口操作] 未找到包含关键字“{title_keyword}”的窗口")
-            return False
-
-        window = windows[0]
-        hwnd = window._hWnd
-
         try:
-            # 使用 win32gui.PostMessage 发送 WM_CLOSE 消息
-            win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
-            logging.info(f"[窗口操作] 已发送关闭窗口“{window.title}”的请求")
-            return True
-        except Exception as e:
-            logging.error(f"[窗口操作] 关闭窗口“{window.title}”失败: {e}")
+            window = gw.getWindowsWithTitle(title_keyword)[0]  # 尝试获取第一个匹配的窗口
+            if window.title != title_keyword:
+                logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
+                return False
+
+            hwnd = window._hWnd
+
+            try:
+                # 使用 win32gui.PostMessage 发送 WM_CLOSE 消息
+                win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+                logging.info(f"[窗口操作] 已发送关闭窗口“{window.title}”的请求")
+                return True
+            except Exception as e:
+                logging.error(f"[窗口操作] 关闭窗口“{window.title}”失败: {e}")
+                return False
+        except IndexError:
+            logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
             return False
 
     @staticmethod
     def force_close_window(title_keyword):
         """
-        强制关闭包含指定关键字的窗口的应用程序。  使用 taskkill 命令。
+        强制关闭指定标题的窗口的应用程序。  使用 taskkill 命令。
         """
-        windows = gw.getWindowsWithTitle(title_keyword)
-        if not windows:
-            logging.error(f"[窗口操作] 未找到包含关键字“{title_keyword}”的窗口")
-            return False
-
-        window = windows[0]
-        hwnd = window._hWnd
-
         try:
-            # 获取进程 ID (PID)
-            _, pid = win32process.GetWindowThreadProcessId(hwnd)
+            window = gw.getWindowsWithTitle(title_keyword)[0]  # 尝试获取第一个匹配的窗口
+            if window.title != title_keyword:
+                logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
+                return False
 
-            # 使用 taskkill 命令强制关闭进程
-            os.system(f"taskkill /F /PID {pid}")
-            logging.info(f"[窗口操作] 强制关闭窗口“{window.title}” (PID: {pid})")
-            return True
-        except Exception as e:
-            logging.error(f"[窗口操作] 强制关闭窗口“{window.title}”失败: {e}")
+            hwnd = window._hWnd
+
+            try:
+                # 获取进程 ID (PID)
+                _, pid = win32process.GetWindowThreadProcessId(hwnd)
+
+                # 使用 taskkill 命令强制关闭进程
+                os.system(f"taskkill /F /PID {pid}")
+                logging.info(f"[窗口操作] 强制关闭窗口“{window.title}” (PID: {pid})")
+                return True
+            except Exception as e:
+                logging.error(f"[窗口操作] 强制关闭窗口“{window.title}”失败: {e}")
+                return False
+        except IndexError:
+            logging.error(f"[窗口操作] 未找到标题为“{title_keyword}”的窗口")
             return False
