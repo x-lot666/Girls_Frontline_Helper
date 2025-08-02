@@ -86,6 +86,8 @@ def menu_enter_mission():
             if location is not None:
                 MouseOps.left_click_at(location.x, location.y)
                 BasicTasks.click_start_the_task()  # 点击"确认出击"
+                # 出现确定按钮,则点击(每天第一次进入关卡时会出现)
+                ImageOps.find_image(COMMON_IMG("confirm"), confidence=0.7, action="click", timeout=1)
                 break
             ImageOps.find_image(IMG("mark_image_logo"), x_offset=200, y_offset=200, action="move")
             MouseOps.drag_rel(1000, 0)
