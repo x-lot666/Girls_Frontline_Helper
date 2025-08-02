@@ -245,7 +245,7 @@ def main(max_actions=999):
     """
     :param max_actions: 最大执行次数
     """
-    print_banner("[13-4 双vector拖尸] 自动化执行开始，按f10强行退出")
+    print_banner("[13-4 双vector拖尸] 自动化执行开始")
 
     WindowOps.activate_window("少女前线")  # 激活游戏窗口
     action_count = 1  # 初始化执行计数
