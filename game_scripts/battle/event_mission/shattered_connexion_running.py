@@ -223,9 +223,20 @@ def start_mission_actions():
     BasicTasks.click_execute_plan()  # 点击执行计划
     # 计划模式,设置路径并执行------------------------------------------------------------------------
 
-    # 等待第三回合开始
-    if ImageOps.wait_image(IMG("turn_3"), confidence=0.85):
-        wait(10)
+    # 等待计划模式结束,到第三回合开始后开始操作----------------------------------------------------------
+    while True:
+
+        # 将铁血的战斗模式切换成"歼灭"模式
+        if ImageOps.locate_image(IMG("elimination_mode"), confidence=0.7):
+            ImageOps.find_image(IMG("elimination_mode"), confidence=0.7, action="click")
+            wait(6)
+
+        # 等待第三回合开始
+        if ImageOps.locate_image(IMG("turn_3"), confidence=0.85):
+            wait(10)
+            break
+        wait(1)
+    # 等待计划模式结束,到第三回合开始后开始操作----------------------------------------------------------
 
     # 把白包子设置成"待机"模式-----------------------------------------------------------------------
     # 清除选择
