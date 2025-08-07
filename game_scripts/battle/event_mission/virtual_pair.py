@@ -223,7 +223,7 @@ def check_action_limit(action_count, max_actions):
 
 def window_monitor(action_limit_event):
     """
-    设置后台线程：检测是否出现需要“回主菜单”的意外窗口
+    设置后台线程：检测是否出现:处理后会“返回主菜单”的意外窗口
     所有处理后返回主菜单的意外窗口,都在这里设置:常规意外窗口(常规战役)+特定意外窗口(灰域or活动)
     如果返回主菜单，则设置全局事件，自己退出本轮线程
     """
@@ -231,6 +231,7 @@ def window_monitor(action_limit_event):
         try:
             if deal_unexpected_windows():
                 window_event.set()  # 通知主线程
+                logging.info("[监控线程] 已处理异常窗口，并返回到主菜单")
                 return
         except Exception as e:
             logging.error("[监控线程] 发生异常: %s", e)
@@ -284,7 +285,6 @@ def main(max_actions=3, rescued_doll_type=1, difficulty="ex_mode"):
 
             # 如果监控线程已发现异常 → 跳出循环、回到主流程
             if window_event.is_set():
-                logging.info("[主线程] 收到异常窗口信号，准备返回主菜单")
                 break
 
             # 定位到“team 1”图像,表示可以继续进行任务
