@@ -35,9 +35,10 @@ def menu_enter_mission():
 
         # 如果没找到第九战役，滚动页面到底部
         if not ImageOps.find_image(IMG("battle_9"), confidence=0.95, timeout=1, action="click"):
-            ImageOps.find_image(IMG("mark_image"), x_offset=300, action="move")
+            ImageOps.find_image(IMG("mark_image"), x_offset=300, y_offset=-200, action="move")
             wait(0.2)
             MouseOps.scroll_mouse(-3, 20)
+            wait(0.5)
             ImageOps.find_image(IMG("battle_9"), confidence=0.95, action="click")
 
     # 设置成夜战难度
