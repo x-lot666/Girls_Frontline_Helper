@@ -229,6 +229,7 @@ def window_monitor(action_limit_event):
     """
     while not window_event.is_set():
         try:
+            # 常规意外窗口
             if deal_unexpected_windows():
                 window_event.set()  # 通知主线程
                 logging.info("[监控线程] 已处理异常窗口，并返回到主菜单")
@@ -238,7 +239,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=3, rescued_doll_type=1, difficulty="ex_mode"):
+def main(max_actions=30, rescued_doll_type=5, difficulty="ex_mode"):
     """
     :param max_actions: 最大执行次数
     :param rescued_doll_type: 打捞的人形类型
