@@ -1,3 +1,5 @@
+import threading
+
 from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
@@ -12,6 +14,8 @@ from game_ops.composed_tasks import *
 # 所用的资源图片的文件夹名称
 set_resource_subdir("virtual_pair")
 rescued_doll = 5
+window_event = threading.Event()
+window_thread = None  # 方便后面重启监控线程
 
 def menu_enter_mission(final=False):
     """
@@ -185,6 +189,21 @@ def check_action_limit(action_count, max_actions):
         wait(1)
         final_mission()
 
+def window_monitor(action_limit_event):
+    """
+    设置后台线程：检测是否出现需要“回主菜单”的意外窗口
+    所有处理后返回主菜单的意外窗口,都在这里设置:常规意外窗口(常规战役)+特定意外窗口(灰域or活动)
+    如果返回主菜单，则设置全局事件，自己退出本轮线程
+    """
+    while not window_event.is_set():
+        try:
+            if deal_unexpected_windows():
+                window_event.set()   # 通知主线程
+                return
+        except Exception as e:
+            logging.error("[监控线程] 发生异常: %s", e)
+        time.sleep(1)
+
 
 def main(max_actions=30, rescued_doll_type=5):
     """
@@ -216,12 +235,18 @@ def main(max_actions=30, rescued_doll_type=5):
         menu_enter_mission()
         action_count += 1
 
+        # 进入循环前，把窗口事件清零，并启动监控线程
+        window_event.clear()
+        window_thread = threading.Thread(target=window_monitor, args=(window_event,), daemon=True)
+        window_thread.start()
+
         while True:
             # 检查执行次数是否超过限制
             check_action_limit(action_count, max_actions)
 
-            # 处理意外窗口后,从主菜单重新开始
-            if deal_unexpected_windows():
+            # 如果监控线程已发现异常 → 跳出循环、回到主流程
+            if window_event.is_set():
+                logging.info("[主线程] 收到异常窗口信号，准备返回主菜单")
                 break
 
             # 定位到“team 1”图像,表示可以继续进行任务
