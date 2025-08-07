@@ -9,13 +9,27 @@ from game_ops.composed_tasks import *
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
     - 关闭"回合结束二次确认"和"自动补给"
+更新:
+    - 2024-08-08:应朋友要求,增加了普通难度打捞,在主函数处设置,默认ex难度。
 """
-
+# ====================================================
+# =                      全局变量
+# ====================================================
 # 所用的资源图片的文件夹名称
 set_resource_subdir("virtual_pair")
-rescued_doll = 5
+
+# 线程设置
 window_event = threading.Event()
 window_thread = None  # 方便后面重启监控线程
+
+# 设置打捞的人形类型
+rescued_doll = 5
+# 难度选择
+select_difficulty="ex_mode"
+# 设置任务名称和机场名称,用于后续难度选择
+mission_name = "vacuum_annihilation_ex"
+airport_name = "airport_ex"
+
 
 def menu_enter_mission(final=False):
     """
@@ -23,28 +37,43 @@ def menu_enter_mission(final=False):
     :param final: 是否为最后一次执行任务
     """
 
+    global mission_name
+    global airport_name
+
     # 点击“‘虚子粒对’活动入口”
     ImageOps.find_image(IMG("virtual_pair"), action="click")
 
     # 等待页面加载完成
     ImageOps.wait_image(IMG("mark_image_logo"))
 
-    # 如果难度是“普通”,就点一下,切换到其他难度
-    # 真空湮灭只有ex难度,ux难度实际上也是ex难度
-    ImageOps.find_image(IMG("normal_mode"), action="click", timeout=0.5)
+    # 难度选择
+    if select_difficulty == "normal_mode":
+        mission_name = "vacuum_annihilation"
+        airport_name = "airport"
+        while True:
+            # 如果不是“普通”难度,就一直点,直到切换到“普通”难度
+            if ImageOps.locate_image(IMG("normal_mode")):
+                break
+            ImageOps.find_image(IMG("mark_image_logo"), y_offset=200, action="click")
+            wait(0.5)
 
-    # 点击“真空湮灭ex”
-    if ImageOps.locate_image(IMG("vacuum_annihilation_ex")):
-        ImageOps.find_image(IMG("vacuum_annihilation_ex"), random_point=True, action="click")
+    else:
+        # 如果难度是“普通”,就点一下,切换到其他难度
+        # 真空湮灭只有ex难度,ux难度实际上也是ex难度
+        ImageOps.find_image(IMG("normal_mode"), action="click", timeout=0.5)
+
+    # 点击“真空湮灭”
+    if ImageOps.locate_image(IMG(mission_name)):
+        ImageOps.find_image(IMG(mission_name), random_point=True, action="click")
     else:
         MouseOps.scroll_mouse(-3, 15)  # 向下滚动鼠标,缩小地图
         while True:
-            if ImageOps.locate_image(IMG("vacuum_annihilation_ex")):
-                ImageOps.find_image(IMG("vacuum_annihilation_ex"), random_point=True, action="click")
+            if ImageOps.locate_image(IMG(mission_name)):
+                ImageOps.find_image(IMG(mission_name), random_point=True, action="click")
                 break
             # 识别"真空湮灭ex",如果没有找到,则继续滚动鼠标回到开头
             while True:
-                if ImageOps.locate_image(IMG("vacuum_annihilation_ex")):
+                if ImageOps.locate_image(IMG(mission_name)):
                     ImageOps.find_image(IMG("exchange_button"), x_offset=-700, wait=False, action="move")
                     MouseOps.drag_rel(-500, 0)
                     break
@@ -58,7 +87,7 @@ def menu_enter_mission(final=False):
     ImageOps.wait_image(COMMON_IMG("start_battle"))
 
     # 定位“机场”
-    if ImageOps.locate_image(IMG("airport"), confidence=0.70) is None:
+    if ImageOps.locate_image(IMG(airport_name), confidence=0.70) is None:
         ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, random_point=True, padding=30,
                             action="move")
         MouseOps.scroll_mouse(-3, 60)
@@ -78,7 +107,7 @@ def menu_enter_mission(final=False):
         x_offset = 155
         y_offset = 275
 
-    ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
+    ImageOps.find_image(IMG(airport_name), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
 
     # 点击“确定”
     BasicTasks.click_confirm()
@@ -158,7 +187,7 @@ def start_mission_actions():
         x_offset = 305
         y_offset = -200
 
-    ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
+    ImageOps.find_image(IMG(airport_name), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
 
     # 点击“执行计划”
     BasicTasks.click_execute_plan()
@@ -189,6 +218,7 @@ def check_action_limit(action_count, max_actions):
         wait(1)
         final_mission()
 
+
 def window_monitor(action_limit_event):
     """
     设置后台线程：检测是否出现需要“回主菜单”的意外窗口
@@ -198,25 +228,31 @@ def window_monitor(action_limit_event):
     while not window_event.is_set():
         try:
             if deal_unexpected_windows():
-                window_event.set()   # 通知主线程
+                window_event.set()  # 通知主线程
                 return
         except Exception as e:
             logging.error("[监控线程] 发生异常: %s", e)
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_doll_type=5):
+def main(max_actions=3, rescued_doll_type=1, difficulty="ex_mode"):
     """
     :param max_actions: 最大执行次数
     :param rescued_doll_type: 打捞的人形类型
-    rescued_doll = 1 表示打捞 M1895 CB
-    rescued_doll = 2 表示打捞 Cx4 风暴
-    rescued_doll = 3 表示打捞 SRS
-    rescued_doll = 4 表示打捞 AK-74U
-    rescued_doll = 5 表示打捞 TKB-408
+        rescued_doll = 1 表示打捞 M1895 CB
+        rescued_doll = 2 表示打捞 Cx4 风暴
+        rescued_doll = 3 表示打捞 SRS
+        rescued_doll = 4 表示打捞 AK-74U
+        rescued_doll = 5 表示打捞 TKB-408
+
+    :param difficulty: 选择的难度,默认为"ex_mode"
+        "普通": "normal_mode"
+        "困难": "ex_mode"
     """
     global rescued_doll
+    global select_difficulty
     rescued_doll = rescued_doll_type
+    select_difficulty = difficulty
 
     print_banner("[虚子粒对-真空湮灭ex 自动打捞] 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
