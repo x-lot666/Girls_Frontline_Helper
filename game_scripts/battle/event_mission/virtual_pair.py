@@ -223,7 +223,7 @@ def check_action_limit(action_count, max_actions):
 
 def window_monitor(action_limit_event):
     """
-    设置后台线程：检测是否出现:处理后会“返回主菜单”的意外窗口
+    设置监控线程：检测是否出现:处理后会“返回主菜单”的意外窗口
     所有处理后返回主菜单的意外窗口,都在这里设置:常规意外窗口(常规战役)+特定意外窗口(灰域or活动)
     如果返回主菜单，则设置全局事件，自己退出本轮线程
     """
