@@ -4,7 +4,7 @@ from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
-虚子粒对-真空湮灭ex 自动打捞
+虚子粒对-真空湮灭 自动打捞
 说明:
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
@@ -25,7 +25,7 @@ window_thread = None  # 方便后面重启监控线程
 # 设置打捞的人形类型
 rescued_doll = 5
 # 难度选择
-select_difficulty="ex_mode"
+select_difficulty = "ex_mode"
 # 设置任务名称和机场名称,用于后续难度选择
 mission_name = "vacuum_annihilation_ex"
 airport_name = "airport_ex"
@@ -71,7 +71,7 @@ def menu_enter_mission(final=False):
             if ImageOps.locate_image(IMG(mission_name)):
                 ImageOps.find_image(IMG(mission_name), random_point=True, action="click")
                 break
-            # 识别"真空湮灭ex",如果没有找到,则继续滚动鼠标回到开头
+            # 识别"真空湮灭",如果没有找到,则继续滚动鼠标回到开头
             while True:
                 if ImageOps.locate_image(IMG(mission_name)):
                     ImageOps.find_image(IMG("exchange_button"), x_offset=-700, wait=False, action="move")
@@ -197,7 +197,7 @@ def final_mission():
     """
     最后一次执行任务
     """
-    logging.info("[虚子粒对-真空湮灭ex 自动打捞] 进入最后一次执行")
+    logging.info("[虚子粒对-真空湮灭 自动打捞] 进入最后一次执行")
     if deal_unexpected_windows():
         menu_enter_mission(final=True)
     else:
@@ -207,7 +207,7 @@ def final_mission():
     # 返回主菜单
     ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), click_after=True)
     logging.info(f"[终止] 已达到最大执行次数")
-    print_banner("[虚子粒对-真空湮灭ex 自动打捞] 自动化执行结束")
+    print_banner("[虚子粒对-真空湮灭 自动打捞] 自动化执行结束")
 
     exit()
 
@@ -254,7 +254,7 @@ def main(max_actions=3, rescued_doll_type=1, difficulty="ex_mode"):
     rescued_doll = rescued_doll_type
     select_difficulty = difficulty
 
-    print_banner("[虚子粒对-真空湮灭ex 自动打捞] 自动化执行开始")
+    print_banner("[虚子粒对-真空湮灭 自动打捞] 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():
         logging.error("[启动异常] 启动游戏失败")
@@ -266,7 +266,7 @@ def main(max_actions=3, rescued_doll_type=1, difficulty="ex_mode"):
         # 检查执行次数是否超过限制
         check_action_limit(action_count, max_actions)
 
-        logging.info("[虚子粒对-真空湮灭ex 自动打捞] 从主菜单进入任务")
+        logging.info("[虚子粒对-真空湮灭 自动打捞] 从主菜单进入任务")
         logging.info(f"[计数] 当前打捞次数: {action_count} ")
         menu_enter_mission()
         action_count += 1
@@ -287,7 +287,7 @@ def main(max_actions=3, rescued_doll_type=1, difficulty="ex_mode"):
 
             # 定位到“team 1”图像,表示可以继续进行任务
             if ImageOps.locate_image(IMG("team_1")):
-                logging.info("[虚子粒对-真空湮灭ex 自动打捞] 重复进行任务")
+                logging.info("[虚子粒对-真空湮灭 自动打捞] 重复进行任务")
                 logging.info(f"[计数] 当前打捞次数: {action_count} ")
                 repeat_mission()
                 action_count += 1
