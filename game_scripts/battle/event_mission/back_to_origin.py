@@ -1,3 +1,5 @@
+import threading
+
 from game_ops.composed_tasks import *
 
 """
@@ -8,8 +10,16 @@ from game_ops.composed_tasks import *
     - 关闭"回合结束二次确认"和"自动补给"
 """
 
+# ====================================================
+# =                      全局变量
+# ====================================================
+
 # 所用的资源图片的文件夹名称
 set_resource_subdir("back_to_origin")
+
+# 线程设置
+window_event = threading.Event()
+window_thread = None  # 方便后面重启监控线程
 
 
 def menu_enter_mission(final=False):
@@ -150,6 +160,24 @@ def check_action_limit(action_count, max_actions):
         final_mission()
 
 
+def window_monitor(action_limit_event):
+    """
+    设置监控线程：检测是否出现:处理后会“返回主菜单”的意外窗口
+    所有处理后返回主菜单的意外窗口,都在这里设置:常规意外窗口(常规战役)+特定意外窗口(灰域or活动)
+    如果返回主菜单，则设置全局事件，自己退出本轮线程
+    """
+    while not window_event.is_set():
+        try:
+            # 常规意外窗口
+            if deal_unexpected_windows():
+                window_event.set()  # 通知主线程
+                logging.info("[监控线程] 已处理异常窗口，并返回到主菜单")
+                return
+        except Exception as e:
+            logging.error("[监控线程] 发生异常: %s", e)
+        time.sleep(1)
+
+
 def main(max_actions=4):
     """
     :param max_actions: 最大执行次数
@@ -167,12 +195,17 @@ def main(max_actions=4):
         menu_enter_mission()
         action_count += 1
 
+        # 进入循环前，把窗口事件清零，并启动监控线程
+        window_event.clear()
+        window_thread = threading.Thread(target=window_monitor, args=(window_event,), daemon=True)
+        window_thread.start()
+
         while True:
             # 检查执行次数是否超过限制
             check_action_limit(action_count, max_actions)
 
-            # 处理意外窗口后,从主菜单重新开始
-            if deal_unexpected_windows():
+            # 如果监控线程已发现异常 → 跳出循环、回到主流程
+            if window_event.is_set():
                 break
 
             # 定位到“team 1”图像,表示可以继续进行任务

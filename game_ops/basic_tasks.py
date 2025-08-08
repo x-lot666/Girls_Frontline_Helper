@@ -208,3 +208,9 @@ class BasicTasks:
     def click_doll_three_star():
         return ImageOps.find_image(COMMON_IMG("doll_three_star"),
                                    x_offset=-50, y_offset=100, timeout=0.1, action="click")
+
+
+    # 点击"常驻活动"
+    @staticmethod
+    def click_campaign():
+        ImageOps.find_image(COMMON_IMG("campaign"), random_point=True, action="click")
