@@ -3,7 +3,7 @@ import threading
 from game_ops.composed_tasks import *
 
 """
-纵向应变-五重奏回旋曲ux 自动打捞
+纵向应变-五重奏回旋曲ux 自动打捞(M240L)
 说明:
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
