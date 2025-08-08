@@ -71,7 +71,7 @@ def menu_enter_mission(final=False):
     # 点击“确定”
     BasicTasks.click_confirm()
 
-    # 进入作战后 到 结算页面前 的所有操作
+    # 开始作战后 到 结算页面前 的所有操作
     start_mission_actions()
 
     if final:
@@ -92,7 +92,7 @@ def repeat_mission():
     重复进行入任务
     """
 
-    # 进入作战后 到 结算页面前 的所有操作
+    # 开始作战后 到 结算页面前 的所有操作
     start_mission_actions()
 
     # 点击“再次作战”
@@ -105,7 +105,7 @@ def repeat_mission():
     ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), click_after=True)
 
 
-# 进入作战后 到 结算页面前 的所有操作
+# 开始作战后 到 结算页面前 的所有操作
 def start_mission_actions():
     wait(0.5)
 
