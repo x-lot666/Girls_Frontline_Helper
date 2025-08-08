@@ -17,6 +17,9 @@ from game_ops.composed_tasks import *
 # 所用的资源图片的文件夹名称
 set_resource_subdir("back_to_origin")
 
+# 场景名称
+scene_name = "[溯源回归-行星环ex 自动打捞]"
+
 # 线程设置
 window_event = threading.Event()
 window_thread = None  # 方便后面重启监控线程
@@ -138,7 +141,7 @@ def final_mission():
     """
     最后一次执行任务
     """
-    logging.info("[溯源回归-行星环ex 自动打捞] 进入最后一次执行")
+    logging.info(scene_name + " 进入最后一次执行")
     if deal_unexpected_windows():
         menu_enter_mission(final=True)
     else:
@@ -148,7 +151,7 @@ def final_mission():
     # 返回主菜单
     ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), click_after=True)
     logging.info(f"[终止] 已达到最大执行次数")
-    print_banner("[溯源回归-行星环ex 自动打捞] 自动化执行结束")
+    print_banner(scene_name + " 自动化执行结束")
 
     exit()
 
@@ -182,7 +185,7 @@ def main(max_actions=4):
     """
     :param max_actions: 最大执行次数
     """
-    print_banner("[溯源回归-行星环ex 自动打捞] 自动化执行开始")
+    print_banner(scene_name + " 自动化执行开始")
     WindowOps.activate_window("少女前线")  # 激活游戏窗口
     action_count = 1  # 初始化执行计数
 
@@ -190,7 +193,7 @@ def main(max_actions=4):
         # 检查执行次数是否超过限制
         check_action_limit(action_count, max_actions)
 
-        logging.info("[溯源回归-行星环ex 自动打捞] 从主菜单进入任务")
+        logging.info(scene_name + " 从主菜单进入任务")
         logging.info(f"[计数] 当前打捞次数: {action_count} ")
         menu_enter_mission()
         action_count += 1
@@ -210,7 +213,7 @@ def main(max_actions=4):
 
             # 定位到“team 1”图像,表示可以继续进行任务
             if ImageOps.locate_image(IMG("team_1")):
-                logging.info("[溯源回归-行星环ex 自动打捞] 重复进行任务")
+                logging.info(scene_name + " 重复进行任务")
                 logging.info(f"[计数] 当前打捞次数: {action_count} ")
                 repeat_mission()
                 action_count += 1
