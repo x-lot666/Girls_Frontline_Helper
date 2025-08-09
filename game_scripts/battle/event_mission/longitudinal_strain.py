@@ -1,5 +1,6 @@
 import threading
 
+from core_ops.composed.composed_ops import launch_gf
 from game_ops.composed_tasks import *
 
 """
@@ -194,12 +195,15 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=4):
+def main(max_actions=30):
     """
     :param max_actions: 最大执行次数
     """
     print_banner(scene_name + " 自动化执行开始")
-    WindowOps.activate_window("少女前线")  # 激活游戏窗口
+    # 激活游戏窗口,如果失败则自动打开少女前线
+    if not launch_gf():
+        logging.error("[启动异常] 启动游戏失败")
+        exit()
     action_count = 1  # 初始化执行计数
 
     while True:
