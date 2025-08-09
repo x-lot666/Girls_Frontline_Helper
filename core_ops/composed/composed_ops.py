@@ -2,6 +2,7 @@ import traceback
 
 from core_ops.utils import *
 from game_ops.basic_tasks import *
+from game_ops.composed_tasks import deal_unexpected_windows
 
 """
 各种操作相关的复合逻辑
@@ -38,6 +39,9 @@ def launch_gf():
                 if ImageOps.locate_image(COMMON_IMG("back_button_2"), confidence=0.7):
                     ImageOps.find_image(COMMON_IMG("back_button_2"), confidence=0.7, action="click")
                     continue
+
+                # 处理意外窗口的复合函数(处理登入时遇到后勤完成)
+                deal_unexpected_windows()
 
 
                 # 确认进入主菜单后,退出循环
