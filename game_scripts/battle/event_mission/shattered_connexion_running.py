@@ -228,7 +228,7 @@ def start_mission_actions():
 
         # 将铁血的战斗模式切换成"歼灭"模式
         if ImageOps.locate_image(IMG("elimination_mode"), confidence=0.7):
-            ImageOps.find_image(IMG("elimination_mode"), confidence=0.7, action="click")
+            ImageOps.find_image(IMG("elimination_mode"), confidence=0.7, action="click", timeout=1)
             wait(6)
 
         # 等待第三回合开始
