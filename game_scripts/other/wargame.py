@@ -121,14 +121,8 @@ def repeat_mission():
     playing_game()
 
 
-# 最后一次执行任务
-def final_mission():
-    logging.info("[兵棋开房间挂机] 进入最后一次执行")
-
-    start_and_choose_team()
-
-    playing_game()
-
+# 返回主菜单
+def return_to_main_menu():
     # 退出房间
     ImageOps.find_image(IMG("back_to_main"), random_point=True, action="click")
 
@@ -143,12 +137,8 @@ def final_mission():
 def check_action_limit(action_count, max_actions):
     """
     检查执行次数是否超过最大限制
-    :param action_count: 当前执行次数
-    :param max_actions: 最大执行次数
     """
-    if action_count >= max_actions:
-        wait(1)
-        final_mission()
+    return action_count > max_actions
 
 
 def main(max_actions=1):
@@ -160,28 +150,9 @@ def main(max_actions=1):
 
     WindowOps.activate_window("少女前线")  # 激活游戏窗口
     action_count = 1  # 初始化执行计数
-
-    if max_actions == 1:
-        logging.info("[兵棋开房间挂机] 场景 从主菜单进入任务")
-        logging.info("[兵棋开房间挂机] 进入最后一次执行")
-
-        menu_enter_mission()
-
-        # 退出房间
-        ImageOps.find_image(IMG("back_to_main"), random_point=True, action="click")
-
-        # 点击确定
-        BasicTasks.click_confirm()
-
-        # 退回主菜单
-        ImageOps.find_image(IMG("back_to_menu"), random_point=True, action="click")
-
-        exit()
+    action_limit = False
 
     while True:
-        # 检查执行次数是否超过限制
-        check_action_limit(action_count, max_actions)
-
         logging.info("[兵棋开房间挂机] 场景 从主菜单进入任务")
         logging.info(f"[计数] 当前游戏次数: {action_count} ")
         menu_enter_mission()
@@ -189,14 +160,19 @@ def main(max_actions=1):
 
         while True:
             # 检查执行次数是否超过限制
-            check_action_limit(action_count, max_actions)
+            action_limit = check_action_limit(action_count, max_actions)
 
-            # 定位到“开始游戏”图像,表示可以继续进行任务
-            if ImageOps.locate_image(IMG("start_game")):
+            if not action_limit:
                 logging.info("[兵棋开房间挂机] 场景 重复进行任务")
                 logging.info(f"[计数] 当前游戏次数: {action_count} ")
-                repeat_mission()
+                repeat_mission()  # 重复进行任务
                 action_count += 1
+            else:
+                return_to_main_menu()
+                print(f"[终止] 已达到最大执行次数 {max_actions},程序结束")
+
+                print_banner("[9-4 midnight 斯捷奇金专属 'APS专用枪托' 打捞] 自动化执行结束")
+                exit()
 
 
 if __name__ == '__main__':
