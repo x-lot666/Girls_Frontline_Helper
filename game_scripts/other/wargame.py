@@ -3,6 +3,7 @@ import threading
 from core_ops.composed.composed_ops import *
 """
 兵棋开房间挂机
+@author: moonight1199
 挖坑：
     - 实现冲锋枪流派全自动游玩
 """
