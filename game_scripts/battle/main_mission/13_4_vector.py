@@ -38,12 +38,9 @@ def menu_enter_mission(final=False):
         # 切换至作战任务界面时未选择第十三战役则退出
         if not ImageOps.find_image(IMG("battle_13_4"), timeout=2, random_point=True, action="click"):
             # 将鼠标移动到战役选择区，并滚动至最下方
-            battles = ["battle_3", "battle_6", "battle_9"]
-            wait(1)
-            for battle in battles:
-                if ImageOps.find_image(IMG(battle)):
-                    MouseOps.scroll_mouse(-1, 25)
-                    break
+            ImageOps.find_image(IMG("mark_image"), x_offset=250, y_offset=-200, action="move")
+            wait(0.2)
+            MouseOps.scroll_mouse(-3, 20)
 
             # 选择战役13
             ImageOps.find_image(IMG("battle_13"), confidence=0.98, random_point=True, action="click")
