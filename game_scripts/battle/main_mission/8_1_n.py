@@ -2,6 +2,7 @@ from game_ops.composed_tasks import *
 
 """
 8-1 夜战 双Zas拖尸
+@author: moonight1199
 说明：
     - 第一梯队：拖尸队
     - 第二梯队：队长位zas
