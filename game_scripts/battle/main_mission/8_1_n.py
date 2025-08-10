@@ -152,19 +152,19 @@ def exchange_zas():
     # 寻找仓库里的zas并换队
     while True:
         if ImageOps.locate_image(IMG("zas_team1"), confidence=0.9) is not None:
-            ImageOps.find_image(IMG("zas_team1"), confidence=0.9, random_point=True, action="click")
+            ImageOps.find_image(IMG("zas_team1"), confidence=0.9, action="click")
             break
         MouseOps.scroll_mouse(-1, 5)
 
     # 如果两只zas在同一页则直接选择
     if ImageOps.locate_image(IMG("zas_team2"), confidence=0.9) is not None:
-        ImageOps.find_image(IMG("zas_team2"), confidence=0.9, random_point=True, action="click")
+        ImageOps.find_image(IMG("zas_team2"), confidence=0.9, action="click")
     else:
         # 不在同一页时先回滚一页，再继续往下查找
         MouseOps.scroll_mouse(1, 5)
         while True:
             if ImageOps.locate_image(IMG("zas_team2"), confidence=0.9) is not None:
-                ImageOps.find_image(IMG("zas_team2"), confidence=0.9, random_point=True, action="click")
+                ImageOps.find_image(IMG("zas_team2"), confidence=0.9, action="click")
                 break
             MouseOps.scroll_mouse(-1, 5)
 
@@ -185,6 +185,9 @@ def start_mission_actions():
     # 点击开始作战
     BasicTasks.click_start_battle()
 
+    # 等待动画加载
+    wait_in_range(2.2, 3)
+
     # 重新作战的情况下，点击开始任务才会出现装备爆仓提醒
     if upgrade_equipment:
         # 配置升级装备时，走装备升级窗口处理流程
@@ -196,9 +199,6 @@ def start_mission_actions():
         if deal_unexpected_windows():
             equipment_round = True
             return
-
-    # 等待动画加载
-    wait_in_range(2.2, 3)
 
     # 第二梯队补充并撤离----------------------------------------------------------
     ImageOps.find_image(IMG("team_2"), x_offset=-33, y_offset=30, action="click")
