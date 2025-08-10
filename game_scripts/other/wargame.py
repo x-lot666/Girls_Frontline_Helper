@@ -158,7 +158,11 @@ def main(max_actions=1):
 
     print_banner("[兵棋开房间挂机] 自动化执行开始")
 
-    WindowOps.activate_window("少女前线")  # 激活游戏窗口
+    # 激活游戏窗口,如果失败则自动打开少女前线
+    if not launch_gf():
+        logging.error("[启动异常] 启动游戏失败")
+        exit()
+
     action_count = 1  # 初始化执行计数
 
     if max_actions == 1:
