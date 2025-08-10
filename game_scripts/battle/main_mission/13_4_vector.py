@@ -38,12 +38,9 @@ def menu_enter_mission(final=False):
         # 切换至作战任务界面时未选择第十三战役则退出
         if not ImageOps.find_image(IMG("battle_13_4"), timeout=2, random_point=True, action="click"):
             # 将鼠标移动到战役选择区，并滚动至最下方
-            battles = ["battle_3", "battle_6", "battle_9"]
-            wait(1)
-            for battle in battles:
-                if ImageOps.find_image(IMG(battle)):
-                    MouseOps.scroll_mouse(-1, 25)
-                    break
+            ImageOps.find_image(IMG("mark_image"), x_offset=250, y_offset=-200, action="move")
+            wait(0.2)
+            MouseOps.scroll_mouse(-3, 20)
 
             # 选择战役13
             ImageOps.find_image(IMG("battle_13"), confidence=0.98, random_point=True, action="click")
@@ -60,10 +57,45 @@ def menu_enter_mission(final=False):
     # 寻找重型机场，如果没找到，就缩放地图
     if ImageOps.wait_image(IMG("airport"), timeout=1, confidence=0.75) is None:
         scroll_flag = True
-        WindowOps.move_to_window_center("少女前线")
-        wait(0.3)
-        MouseOps.scroll_mouse(-1, 25)
+        adjust_page()
 
+    # 部署梯队
+    deploy_team()
+
+    # 交换第一梯队和第二梯队的vector
+    exchange_vector()
+
+    # 交换后重置缩放，此处
+    if scroll_flag:
+        adjust_page()
+
+    # # 进入作战后 到 结算页面前 的所有操作
+    # start_mission_actions()
+    #
+    # # 最后一次执行时直接退出
+    # if final:
+    #     return
+    #
+    # # 等待并点击“再次作战”
+    # BasicTasks.click_repeat_battle()
+    #
+    # wait(2)
+    #
+    # # 由于结算时会弹出获取人形的界面,需要等结算完毕后点击一次
+    # # 持续点击,直到出现“再次作战”
+    # ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), click_after=True)
+
+
+# 调整地图
+def adjust_page():
+    WindowOps.move_to_window_center("少女前线")
+    wait(0.3)
+    MouseOps.scroll_mouse(-1, 25)
+    wait(1)
+
+
+# 部署梯队
+def deploy_team():
     # 选择指挥部部署第一梯队
     ImageOps.find_image(IMG("headquarter"), random_point=True, action="click")
     BasicTasks.click_confirm()
@@ -72,35 +104,6 @@ def menu_enter_mission(final=False):
     ImageOps.find_image(IMG("airport"), confidence=0.75, random_point=True, action="click")
     ImageOps.find_image(IMG("choose_team"), timeout=1, random_point=True, action="click")
     BasicTasks.click_confirm()
-
-    wait(1)
-    # 交换第一梯队和第二梯队的vector
-    exchange_vector()
-
-    # 等待返回战斗页面
-    wait(2)
-
-    # 交换后重置缩放，此处
-    if scroll_flag:
-        WindowOps.move_to_window_center("少女前线")
-        wait(0.3)
-        MouseOps.scroll_mouse(-1, 25)
-
-    # 进入作战后 到 结算页面前 的所有操作
-    start_mission_actions()
-
-    # 最后一次执行时直接退出
-    if final:
-        return
-
-    # 等待并点击“再次作战”
-    BasicTasks.click_repeat_battle()
-
-    wait(2)
-
-    # 由于结算时会弹出获取人形的界面,需要等结算完毕后点击一次
-    # 持续点击,直到出现“再次作战”
-    ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), click_after=True)
 
 
 # 交换第一梯队和第二梯队的vector
@@ -153,6 +156,9 @@ def exchange_vector():
     # 点击“返回”
     BasicTasks.click_back_button()
 
+    # 等待返回战斗页面
+    wait(2)
+
 
 # 进入作战后 到 结算页面前 的所有操作
 def start_mission_actions():
@@ -188,57 +194,40 @@ def start_mission_actions():
     # 等待并点击“执行计划”
     BasicTasks.click_execute_plan()
 
+    # 等待"再次作战"按钮出现(说明回合结束)
+    ImageOps.wait_image(COMMON_IMG("repeat_battle"))
+    wait(1)
+    ImageOps.find_image(COMMON_IMG("repeat_battle"), action="click")
+    wait(0.5)
+    # 把鼠标往右移动,避免下面点击到“再次作战”按钮
+    MouseOps.move_mouse(300, 0)
+    wait(0.5)
 
-def final_mission():
-    """
-    最后一次执行任务
-    """
-    logging.info("[13-4 双vector拖尸] 进入最后一次执行")
-    if deal_unexpected_windows_retire_3_4():
-        menu_enter_mission(final=True)
-    else:
-        exchange_vector()
-        start_mission_actions()
-    # 等待任务结束
-    ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, action="move")
-    # 返回主菜单
-    ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), click_after=True)
-    logging.info(f"[终止] 已达到最大执行次数")
-    print_banner("[13-4 双vector拖尸] 自动化执行结束")
-
-    exit()
+    # 持续点击,直到“再次作战”再次出现
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), interval=1)
 
 
 def repeat_mission():
     """
     重复进入任务
     """
+    # 点击"再次作战"按钮
+    ImageOps.find_image(COMMON_IMG("repeat_battle"), action="click")
 
-    # 交换第一梯队和第二梯队的vector
-    exchange_vector()
 
-    # 进入作战后 到 结算页面前 的所有操作
-    start_mission_actions()
-
-    # 等待并点击“再次作战”
-    BasicTasks.click_repeat_battle()
-
-    wait(2)
-
-    # 由于结算时会弹出获取人形的界面,需要等结算完毕后点击一次
-    # 持续点击,直到出现“再次作战”
-    ImageOps.hold_click_until_image_appear(COMMON_IMG("repeat_battle"), click_after=True)
+def return_to_main_menu():
+    """
+    任务结束后,返回主菜单
+    """
+    # 点击“返回按钮”
+    ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), interval=0.5, click_after=True)
 
 
 def check_action_limit(action_count, max_actions):
     """
     检查执行次数是否超过最大限制
-    :param action_count: 当前执行次数
-    :param max_actions: 最大执行次数
     """
-    if action_count >= max_actions:
-        wait(1)
-        final_mission()
+    return action_count > max_actions
 
 
 def main(max_actions=999):
@@ -249,30 +238,35 @@ def main(max_actions=999):
 
     WindowOps.activate_window("少女前线")  # 激活游戏窗口
     action_count = 1  # 初始化执行计数
+    action_limit = False
 
     while True:
-        # 检查执行次数是否超过限制
-        check_action_limit(action_count, max_actions)
-
         logging.info("[13-4 双vector拖尸] 场景 从主菜单进入任务")
         logging.info(f"[计数] 当前拖尸次数: {action_count} ")
-        menu_enter_mission()
+        menu_enter_mission()  # 从主菜单进入任务
+        start_mission_actions()  # 进入任务后的所有操作
         action_count += 1
 
         while True:
             # 检查执行次数是否超过限制
-            check_action_limit(action_count, max_actions)
+            action_limit = check_action_limit(action_count, max_actions)
 
-            # 处理意外窗口后,从主菜单重新开始
-            if deal_unexpected_windows_retire_3_4():
-                break
-
-            # 定位到“team 1”图像,表示可以继续进行任务
-            if ImageOps.locate_image(IMG("team_1")):
+            # 任务完成并且没有达到最大执行次数,重复进行任务
+            if not action_limit:
                 logging.info("[13-v 双vector拖尸] 场景 重复进行任务")
                 logging.info(f"[计数] 当前打捞次数: {action_count} ")
-                repeat_mission()
+                repeat_mission()  # 重复进入任务
+                if deal_unexpected_windows_retire_3_4():
+                    break
+                exchange_vector()
+                start_mission_actions()
                 action_count += 1
+            else:
+                return_to_main_menu()
+                print(f"[终止] 已达到最大执行次数 {max_actions},程序结束")
+
+                print_banner("[13-v 双vector拖尸] 自动化执行结束")
+                exit()
 
 
 if __name__ == '__main__':

@@ -29,8 +29,15 @@ def retire_dolls():
 
 # 进入作战时仓库满员的人形回收，会回收3/4星人型
 def retire_dolls_3_4():
-    ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click")
-    ImageOps.wait_image(COMMON_IMG("retire_dolls_1"), confidence=0.95)
+    logging.info("[人形回收] 开始人形回收(包含3/4星人型)流程")
+    # 此处这样处理是因为有时候人形回收入口会被其他界面遮挡,导致无法定位到
+    # 详细见_handle_reward_window()函数
+    if not ImageOps.find_image(COMMON_IMG("retire_dolls_0"), x_offset=-100, y_offset=0, action="click", timeout=5):
+        logging.info("[人形回收] 未定位到人形回收入口,可能被其他界面遮挡")
+        return
+    if not ImageOps.wait_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, timeout=5):
+        logging.info("[人形回收] 未定位到人形回收入口,可能被其他界面遮挡")
+        return
     wait(0.8)  # 等待人形回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
     ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
@@ -75,6 +82,42 @@ def recycle_equipment():
     wait(1)  # 等待装备回收完成
     BasicTasks.click_back_button()
     logging.info("[装备回收] 装备回收完成")
+
+
+# 根据等级排序强化装备
+def upgrade_equipment_by_level():
+    logging.info("[装备强化] 开始装备强化流程")
+    if not ImageOps.find_image(COMMON_IMG("recycle_equipment_0"), x_offset=100, y_offset=0, action="click", timeout=5):
+        logging.info("[装备强化] 未定位到装备强化入口,可能被其他界面遮挡")
+        return
+    ImageOps.wait_image(COMMON_IMG("upgrade_equip_0"))
+    wait(0.8)  # 等待回收界面加载，非常重要
+    # 选择被强化装备--------------------------------------------------------------------------------------
+    ImageOps.find_image(COMMON_IMG("upgrade_equip_0"), random_point=True, action="click")
+    ImageOps.find_image(COMMON_IMG("sort"), random_point=True, action="click")
+    ImageOps.find_image(COMMON_IMG("sort"), x_offset=-230, y_offset=100, action="click")
+    ImageOps.find_image(COMMON_IMG("sort"), x_offset=-1350, y_offset=90, action="click")
+    # 选择被强化装备--------------------------------------------------------------------------------------
+
+    # 选择强化狗粮---------------------------------------------------------------------------------------
+    ImageOps.find_image(COMMON_IMG("upgrade_equip_1"), random_point=True, action="click")
+    ImageOps.find_image(COMMON_IMG("upgrade_equip_2"), random_point=True, action="click")
+    wait(0.5)
+    MouseOps.one_left_click()
+    wait(0.5)
+    MouseOps.one_left_click()
+    ImageOps.find_image(COMMON_IMG("confirm_upgrade_equip"), random_point=True, action="click")
+    # 选择强化狗粮---------------------------------------------------------------------------------------
+
+    # 强化装备
+    BasicTasks.click_confirm()
+    wait(0.2)
+    # 高星提醒
+    BasicTasks.click_confirm()
+    # 等待装备强化完成
+    wait(2)
+    BasicTasks.click_back_button()
+    logging.info("[装备强化] 装备强化完成")
 
 
 # 在主界面进行人形修理
@@ -219,9 +262,34 @@ def deal_unexpected_windows_retire_3_4():
     wait(0.1)
 
     # 检测进入作战时是否出现仓库满员-----------------------------------------------------------------------------------------
-    if ImageOps.locate_image(COMMON_IMG("retire_dolls_0")):
+    if ImageOps.locate_image(COMMON_IMG("retire_dolls_0"), confidence=0.98):
         logging.info("[窗口检测] 需要进行人形回收")
         retire_dolls_3_4()
+        wait(5)
+        result1 = True
+
+    # 调用原始意外窗口的复合函数，处理其他异常
+    result2 = deal_unexpected_windows()
+
+    return result1 or result2
+
+# 处理意外窗口的复合函数，会根据强化等级排序强化装备
+def deal_unexpected_windows_upgrade_equipment():
+    """
+    处理意外窗口的整合函数，会根据强化等级排序强化装备
+    当游戏出现各种意外窗口时,使画面回到主菜单,初始化画面
+    :return: result
+    """
+    # 默认值False,如果处理过意外窗口则为True
+    result1 = False
+
+    # 确保图像稳定
+    wait(0.1)
+
+    # 检测进入作战时是否出现装备爆仓-----------------------------------------------------------------------------------------
+    if ImageOps.locate_image(COMMON_IMG("recycle_equipment_0"), confidence=0.98):
+        logging.info("[窗口检测] 需要进行装备强化")
+        upgrade_equipment_by_level()
         wait(5)
         result1 = True
 
