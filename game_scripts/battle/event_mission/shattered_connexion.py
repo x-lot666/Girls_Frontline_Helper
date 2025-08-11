@@ -43,24 +43,30 @@ def menu_enter_mission():
     # 从"裂变链接"活动 进入 "底层归乡2 战斗EX"任务
     # ==========================
 
+    # 等待"裂变链接-底层归乡2 战斗EX"的logo出现(难度选择上面的那朵花)
     ImageOps.wait_image(IMG("mark_image_logo"))
+    # 如果没有找到困难难度,说明当前是普通难度,点击切换成困难难度
     if ImageOps.locate_image(IMG("difficulty_hard"), confidence=0.9) is None:
         ImageOps.find_image(IMG("difficulty_normal"), random_point=True, action="click")
         wait(0.5)
 
+    # 寻找"底层归乡2 战斗EX"按钮,如果找到了就点击
     location = ImageOps.locate_image(IMG("return_to_base_2_ex"), confidence=0.9)
     if location is not None:
         MouseOps.left_click_at(location.x, location.y)
         BasicTasks.click_start_the_task()  # 点击"确认出击"
     else:
+        # 没找到就回到章节目录
         if ImageOps.locate_image(IMG("back_button")) is not None:
             ImageOps.find_image(IMG("back_button"), random_point=True, action="click")
             wait(2)
         else:
             ImageOps.find_image(IMG("mark_image_logo"), action="move")
 
+        # 缩放章节目录
         MouseOps.scroll_mouse(-1, 15)
         while True:
+            # 寻找"第五章节",找不到就拖动画面到顶部,通过偏移量来点击"第四章节"
             location_chapter_5 = ImageOps.locate_image(IMG("chapter_5"))
             if location_chapter_5 is not None:
                 MouseOps.left_click_at(location_chapter_5.x + 300, location_chapter_5.y + 200)
@@ -70,13 +76,17 @@ def menu_enter_mission():
 
         ImageOps.find_image(IMG("mark_image_logo"), action="move")
         wait(2)
+        # 缩放任务列表
         MouseOps.scroll_mouse(-1, 20)
 
         while True:
+            # 寻找"底层归乡2 战斗EX"按钮,如果找到了就点击,没找到就拖动画面到最左边
             location = ImageOps.locate_image(IMG("return_to_base_2_ex"), confidence=0.9)
             if location is not None:
                 MouseOps.left_click_at(location.x, location.y)
                 BasicTasks.click_start_the_task()  # 点击"确认出击"
+                # 出现确定按钮,则点击(每天第一次进入关卡时会出现)
+                ImageOps.find_image(COMMON_IMG("confirm"), confidence=0.7, action="click", timeout=1)
                 break
             ImageOps.find_image(IMG("mark_image_logo"), x_offset=200, y_offset=200, action="move")
             MouseOps.drag_rel(1000, 0)
