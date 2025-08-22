@@ -40,6 +40,9 @@ def menu_enter_mission(final=False):
     # 点击“常驻活动”
     BasicTasks.click_campaign()
 
+    # 等待动画加载
+    wait(1)
+
     # 点击“‘纵向应变’活动入口”
     if (not ImageOps.locate_image(IMG("longitudinal_strain_active")) and
             not ImageOps.find_image(IMG("longitudinal_strain"), action="click", timeout=2)):

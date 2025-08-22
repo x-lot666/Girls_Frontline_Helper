@@ -4,7 +4,7 @@ from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
-虚子粒对-真空湮灭 自动打捞
+虚子粒对-真空湮灭 自动打捞(活动已结束)
 说明:
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。

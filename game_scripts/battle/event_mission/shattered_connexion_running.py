@@ -30,7 +30,11 @@ def menu_enter_mission():
     wait(1)
 
     # 点击“常驻活动”
-    ImageOps.find_image(IMG("mark_image"), y_offset=-200, action="click")
+    BasicTasks.click_campaign()
+
+    # 等待动画加载
+    wait(1)
+
     # 点击“裂变链接”
     if not ImageOps.wait_image(IMG("shattered_connexion"), timeout=1):
         ImageOps.find_image(IMG("mark_image"), x_offset=200, y_offset=-660, action="move")
