@@ -4,13 +4,11 @@ from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
-虚子粒对-真空湮灭 自动打捞(活动已结束)
+蝴蝶星云-特殊的派遣ex 自动打捞
 说明:
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
     - 关闭"回合结束二次确认"和"自动补给"
-更新:
-    - 2024-08-08:应朋友要求,增加了普通难度打捞,在主函数处设置,默认ex难度。
 """
 
 # ====================================================
@@ -18,22 +16,17 @@ from game_ops.composed_tasks import *
 # ====================================================
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("virtual_pair")
+set_resource_subdir("butterfly_nebula")
 
 # 场景名称
-scene_name = "[虚子粒对-真空湮灭 自动打捞]"
+scene_name = "[蝴蝶星云-特殊的派遣ex 自动打捞]"
 
 # 线程设置
 window_event = threading.Event()
 window_thread = None  # 方便后面重启监控线程
 
 # 设置打捞的人形类型
-rescued_doll = 5
-# 难度选择
-select_difficulty = "ex_mode"
-# 设置任务名称和机场名称,用于后续难度选择
-mission_name = "vacuum_annihilation_ex"
-airport_name = "airport_ex"
+rescued_doll = 4
 
 
 def menu_enter_mission(final=False):
@@ -42,48 +35,32 @@ def menu_enter_mission(final=False):
     :param final: 是否为最后一次执行任务
     """
 
-    global mission_name
-    global airport_name
-
-    # 点击“‘虚子粒对’活动入口”
-    ImageOps.find_image(IMG("virtual_pair"), action="click")
+    # 点击“‘蝴蝶星云’活动入口”
+    ImageOps.find_image(IMG("butterfly_nebula"), action="click")
 
     # 等待页面加载完成
     ImageOps.wait_image(IMG("mark_image_logo"))
 
     # 难度选择
-    if select_difficulty == "normal_mode":
-        mission_name = "vacuum_annihilation"
-        airport_name = "airport"
-        while True:
-            # 如果不是“普通”难度,就一直点,直到切换到“普通”难度
-            if ImageOps.locate_image(IMG("normal_mode")):
-                break
-            ImageOps.find_image(IMG("mark_image_logo"), y_offset=200, action="click")
-            wait(0.5)
+    # 如果难度是“普通”,就点一下,切换到困难难度
+    ImageOps.find_image(IMG("normal_mode"), confidence=0.95, action="click", timeout=0.5)
 
-    else:
-        # 如果难度是“普通”,就点一下,切换到其他难度
-        # 真空湮灭只有ex难度,ux难度实际上也是ex难度
-        ImageOps.find_image(IMG("normal_mode"), action="click", timeout=0.5)
-
-    # 点击“真空湮灭”
-    if ImageOps.locate_image(IMG(mission_name)):
-        ImageOps.find_image(IMG(mission_name), random_point=True, action="click")
+    # 点击“特殊的派遣”
+    if ImageOps.locate_image(IMG("special_dispatch"), confidence=0.7):
+        ImageOps.find_image(IMG("special_dispatch"), confidence=0.7, action="click")
     else:
         MouseOps.scroll_mouse(-3, 15)  # 向下滚动鼠标,缩小地图
         while True:
-            if ImageOps.locate_image(IMG(mission_name)):
-                ImageOps.find_image(IMG(mission_name), random_point=True, action="click")
+            if ImageOps.locate_image(IMG("special_dispatch"), confidence=0.7):
+                ImageOps.find_image(IMG("special_dispatch"), confidence=0.7, action="click")
                 break
-            # 识别"真空湮灭",如果没有找到,则继续滚动鼠标回到开头
+            # 识别"特殊的派遣",如果没有找到,则继续滚动鼠标回到开头
             while True:
-                if ImageOps.locate_image(IMG(mission_name)):
-                    ImageOps.find_image(IMG("exchange_button"), x_offset=-700, wait=False, action="move")
-                    MouseOps.drag_rel(-500, 0)
+                if ImageOps.locate_image(IMG("special_dispatch"), confidence=0.7):
                     break
-                ImageOps.find_image(IMG("exchange_button"), x_offset=-1200, wait=False, action="move")
-                MouseOps.drag_rel(1000, 0)
+                ImageOps.find_image(IMG("mark_image_logo"), x_offset=-1000, y_offset=600, wait=False, action="move")
+                MouseOps.drag_rel(700, -500)
+                wait(0.1)
 
     # 点击“确认出击”
     BasicTasks.click_start_the_task()
@@ -92,27 +69,54 @@ def menu_enter_mission(final=False):
     ImageOps.wait_image(COMMON_IMG("start_battle"))
 
     # 定位“机场”
-    if ImageOps.locate_image(IMG(airport_name), confidence=0.70) is None:
+    if ImageOps.locate_image(IMG("airport_ex"), confidence=0.90) is None:
         ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, random_point=True, padding=30,
                             action="move")
-        MouseOps.scroll_mouse(-3, 60)
+        MouseOps.scroll_mouse(-3, 60)  # 向下滚动鼠标,缩小地图
+        MouseOps.drag_rel(0, -500)  # 把地图移到最上方
+
+        while True:
+            if ImageOps.locate_image(IMG("airport_ex"), confidence=0.90):
+                break
+
+            # 把地图移到最右边
+            ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=1400, y_offset=-300, random_point=True,
+                                padding=30,
+                                action="move")
+            MouseOps.drag_rel(-1400, 0, 0.5)
+
+            if ImageOps.locate_image(IMG("airport_ex"), confidence=0.90):
+                break
+
+            # 把地图向左边移动
+            for i in range(2):
+                if ImageOps.locate_image(IMG("airport_ex"), confidence=0.90):
+                    break
+                WindowOps.move_to_window_center("少女前线")
+                MouseOps.drag_rel(600, 0)
+                wait(0.1)
 
     # 这里通过定位地图中心加上准确的偏移量来定位每个机场的位置
-    # 机场一(左下): x_offset=-170, y_offset= 275
-    # 机场二(右下): x_offset= 155, y_offset= 275
-    # 机场三(右上): x_offset= 385, y_offset=-100
+    # 从上到下顺序排序
+    # 机场一: x_offset= -580, y_offset= -165
+    # 机场二: x_offset= -580, y_offset= -80
+    # 机场三: x_offset= -580, y_offset= 70
+    # 机场四: x_offset= -580, y_offset= 180
 
-    # rescued_doll = 5, 把5设置默认值,防止程序报错
-    x_offset = 385
-    y_offset = -100
-    if rescued_doll in (1, 2):
-        x_offset = -170
-        y_offset = 275
-    elif rescued_doll in (3, 4):
-        x_offset = 155
-        y_offset = 275
+    # rescued_doll = 4, 把4设置默认值,防止程序报错
+    x_offset = -580
+    y_offset = 180
+    if rescued_doll == 1:
+        x_offset = -580
+        y_offset = -165
+    elif rescued_doll == 2:
+        x_offset = -580
+        y_offset = -80
+    elif rescued_doll == 3:
+        x_offset = -580
+        y_offset = 70
 
-    ImageOps.find_image(IMG(airport_name), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
+    ImageOps.find_image(IMG("airport_ex"), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
 
     # 点击“确定”
     BasicTasks.click_confirm()
@@ -174,28 +178,35 @@ def start_mission_actions():
     wait(0.5)
 
     # 这里通过定位地图中心加上准确的偏移量来定位每条线路终点的位置
-    # 终点一(打捞M1895 CB): x_offset=-170, y_offset= 275
-    # 终点二(打捞Cx4 风暴/SRS): x_offset= 155, y_offset= 275
-    # 终点三(打捞AK-74U): x_offset= 385, y_offset=-100
-    # 终点四(打捞TKB-408): x_offset= 385, y_offset=-100
+    # 终点一(打捞FARA 83):   x_offset= 580, y_offset= -165
+    # 终点二(打捞CZ2000):    x_offset= 580, y_offset= -80
+    # 终点三(打捞SL8):       x_offset= 580, y_offset= 70
+    # 终点四(打捞VHS):       x_offset= 580, y_offset= 180
 
-    # rescued_doll = 5, 把5设置默认值,防止程序报错
-    x_offset = 385
-    y_offset = 275
+    # rescued_doll = 4, 把4设置默认值,防止程序报错
+    x_offset = 580
+    y_offset = 180
     if rescued_doll == 1:
-        x_offset = -325
-        y_offset = -200
-    elif rescued_doll in (2, 3):
-        x_offset = -5
-        y_offset = -200
-    elif rescued_doll == 4:
-        x_offset = 305
-        y_offset = -200
+        x_offset = -580
+        y_offset = -165
+    elif rescued_doll == 2:
+        x_offset = 580
+        y_offset = -80
+    elif rescued_doll == 3:
+        x_offset = 580
+        y_offset = 70
 
-    ImageOps.find_image(IMG(airport_name), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
+    ImageOps.find_image(IMG("airport_ex"), confidence=0.70, x_offset=x_offset, y_offset=y_offset, action="click")
 
     # 点击“执行计划”
     BasicTasks.click_execute_plan()
+
+    # 剩余点数为1时,点击"结束回合"
+    while True:
+        if ImageOps.is_image_stable_for_seconds(IMG("end_mark"), confidence=0.9, check_time=3, interval=1):
+            wait(0.5)
+            BasicTasks.click_end_round_button()
+            break
 
 
 def final_mission():
@@ -242,24 +253,17 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_doll_type=5, difficulty="ex_mode"):
+def main(max_actions=30, rescued_doll_type=4):
     """
     :param max_actions: 最大执行次数
     :param rescued_doll_type: 打捞的人形类型
-        rescued_doll = 1 表示打捞 M1895 CB
-        rescued_doll = 2 表示打捞 Cx4 风暴
-        rescued_doll = 3 表示打捞 SRS
-        rescued_doll = 4 表示打捞 AK-74U
-        rescued_doll = 5 表示打捞 TKB-408
-
-    :param difficulty: 选择的难度,默认为"ex_mode"
-        "普通": "normal_mode"
-        "困难": "ex_mode"
+        rescued_doll = 1 表示打捞 FARA 83
+        rescued_doll = 2 表示打捞 CZ2000
+        rescued_doll = 3 表示打捞 SL8
+        rescued_doll = 4 表示打捞 VHS
     """
     global rescued_doll
-    global select_difficulty
     rescued_doll = rescued_doll_type
-    select_difficulty = difficulty
 
     print_banner(scene_name + " 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
