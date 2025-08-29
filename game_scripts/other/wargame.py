@@ -15,7 +15,7 @@ set_resource_subdir("wargame")
 # 从主菜单进入任务
 def menu_enter_mission():
     # 打开菜单界面
-    ImageOps.find_image(IMG("menu"), confidence=0.9, random_point=True, action="click")
+    ImageOps.find_image(IMG("menu"), confidence=0.8, random_point=True, action="click")
 
     # 进入咖啡厅
     ImageOps.find_image(IMG("coffee_shop"), random_point=True, action="click")
