@@ -253,7 +253,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_doll_type=1):
+def main(max_actions=30, rescued_doll_type=4):
     """
     :param max_actions: 最大执行次数
     :param rescued_doll_type: 打捞的人形类型
