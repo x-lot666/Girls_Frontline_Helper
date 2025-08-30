@@ -108,7 +108,7 @@ def menu_enter_mission(final=False):
     y_offset = 180
     if rescued_doll == 1:
         x_offset = -580
-        y_offset = -165
+        y_offset = -160
     elif rescued_doll == 2:
         x_offset = -580
         y_offset = -80
@@ -187,8 +187,8 @@ def start_mission_actions():
     x_offset = 580
     y_offset = 180
     if rescued_doll == 1:
-        x_offset = -580
-        y_offset = -165
+        x_offset = 580
+        y_offset = -160
     elif rescued_doll == 2:
         x_offset = 580
         y_offset = -80
