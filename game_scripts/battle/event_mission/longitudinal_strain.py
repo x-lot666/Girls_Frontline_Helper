@@ -43,20 +43,24 @@ def menu_enter_mission(final=False):
     # 等待动画加载
     wait(1)
 
-    # 点击“‘纵向应变’活动入口”
-    if (not ImageOps.locate_image(IMG("longitudinal_strain_active")) and
-            not ImageOps.find_image(IMG("longitudinal_strain"), action="click", timeout=2)):
-        ImageOps.find_image(IMG("mark_image"), x_offset=200, y_offset=-660, action="move")
-        while True:
-            MouseOps.scroll_mouse(3)
-            wait(0.5)
-            if ImageOps.locate_image(IMG("longitudinal_strain")):
-                ImageOps.find_image(IMG("longitudinal_strain"))
-                break
+    if not ImageOps.find_image(IMG("longitudinal_strain_button"), random_point=True, action="click", timeout=1):
 
-    wait(1)  # 非常重要,等待动画加载
+        # 点击“‘纵向应变’活动入口”
+        if (not ImageOps.locate_image(IMG("longitudinal_strain_active")) and
+                not ImageOps.find_image(IMG("longitudinal_strain"), action="click", timeout=1)):
+            ImageOps.find_image(IMG("mark_image"), x_offset=200, y_offset=-660, action="move")
+            while True:
+                MouseOps.scroll_mouse(-3)
+                wait(0.5)
+                if ImageOps.locate_image(IMG("longitudinal_strain")):
+                    ImageOps.find_image(IMG("longitudinal_strain"), action="click")
+                    break
+                if ImageOps.locate_image(IMG("longitudinal_strain_active")):
+                    break
 
-    ImageOps.find_image(IMG("longitudinal_strain_button"), random_point=True, action="click")
+        wait(1)  # 非常重要,等待动画加载
+
+        ImageOps.find_image(IMG("longitudinal_strain_button"), random_point=True, action="click")
 
     # 等待页面加载完成
     ImageOps.wait_image(IMG("mark_image_logo"))

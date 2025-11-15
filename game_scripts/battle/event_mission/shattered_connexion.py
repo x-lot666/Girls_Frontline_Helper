@@ -34,14 +34,26 @@ def menu_enter_mission():
     # 等待动画加载
     wait(1)
 
-    # 点击“裂变链接”
-    if not ImageOps.wait_image(IMG("shattered_connexion"), timeout=1):
-        ImageOps.find_image(IMG("mark_image"), x_offset=200, y_offset=-660, action="move")
-        MouseOps.scroll_mouse(3)
-        wait(0.5)
-        MouseOps.one_left_click()
-    wait(1)  # 非常重要,等待动画加载
-    ImageOps.find_image(IMG("shattered_connexion"), random_point=True, action="click")
+    # 点击“‘裂变链接’”
+    if not ImageOps.find_image(IMG("shattered_connexion"), random_point=True, action="click", timeout=1):
+
+        # 点击“‘裂变链接’活动入口”
+        if (not ImageOps.locate_image(IMG("shattered_connexion_entry_active")) and
+                not ImageOps.find_image(IMG("shattered_connexion_entry"), action="click", wait=False)):
+            ImageOps.find_image(IMG("mark_image"), x_offset=200, y_offset=-660, action="move")
+            while True:
+                MouseOps.scroll_mouse(-3)
+                wait(0.5)
+                if ImageOps.locate_image(IMG("shattered_connexion_entry")):
+                    ImageOps.find_image(IMG("shattered_connexion_entry"), action="click")
+                    break
+                if ImageOps.locate_image(IMG("shattered_connexion_entry_active")):
+                    break
+
+        wait(1)  # 非常重要,等待动画加载
+
+        # 点击“‘裂变链接’”
+        ImageOps.find_image(IMG("shattered_connexion"), random_point=True, action="click")
 
     # ==========================
     # 从"裂变链接"活动 进入 "底层归乡2 战斗EX"任务
