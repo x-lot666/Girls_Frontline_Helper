@@ -23,7 +23,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("8_1_n")
+set_resource_subdir("8_1_midnight")
 
 # 通用配置项------------------------------------------------------------------
 temp_team = True  # 配置是否使用狗粮队

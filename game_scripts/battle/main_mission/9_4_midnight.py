@@ -17,7 +17,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("9_4_n")
+set_resource_subdir("9_4_midnight")
 
 
 def menu_enter_mission():
@@ -29,17 +29,19 @@ def menu_enter_mission():
     BasicTasks.click_home_battle_button()
 
     # 如果第九战役没被激活，则点击第九战役
-    if not ImageOps.wait_image(IMG("battle_9_active"), confidence=0.9, timeout=1.5):
+    if not ImageOps.wait_image(IMG("battle_9_active"), confidence=0.96, timeout=1.5):
         # 切换至作战任务界面
         ImageOps.find_image(IMG("combat_mission"), action="click")
 
         # 如果没找到第九战役，滚动页面到底部
-        if not ImageOps.find_image(IMG("battle_9"), confidence=0.95, timeout=1, action="click"):
-            ImageOps.find_image(IMG("mark_image"), x_offset=300, y_offset=-200, action="move")
+        if not ImageOps.find_image(IMG("battle_9"), confidence=0.96, timeout=1, action="click"):
+            ImageOps.find_image(IMG("mark_image"), x_offset=260, y_offset=-200, action="move")
             wait(0.2)
             MouseOps.scroll_mouse(-3, 20)
             wait(0.5)
-            ImageOps.find_image(IMG("battle_9"), confidence=0.95, action="click")
+            MouseOps.scroll_mouse(3, 2)
+            wait(2)
+            ImageOps.find_image(IMG("battle_9"), confidence=0.96, action="click")
 
     # 设置成夜战难度
     ImageOps.find_image(IMG("mark_image"), x_offset=1400, y_offset=-600, action="click")
