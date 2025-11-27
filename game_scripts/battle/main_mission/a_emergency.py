@@ -4,7 +4,7 @@ from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
-循演战役 A-普通 自动打捞
+循演战役 A-紧急 自动打捞
 说明:
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
@@ -17,10 +17,10 @@ from game_ops.composed_tasks import *
 # 请不要修改此处的任何变量,各项可调参数在主函数"main()"处设置
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("a_normal")
+set_resource_subdir("a_emergency")
 
 # 场景名称
-scene_name = "[循演战役 A-普通 自动打捞]"
+scene_name = "[循演战役 A-紧急 自动打捞]"
 
 # 线程设置
 window_event = threading.Event()
@@ -55,8 +55,8 @@ def menu_enter_mission(final=False):
                 if ImageOps.find_image(IMG("battle_a"), confidence=0.95, timeout=0.5, action="click"):
                     break
 
-    # 设置成普通难度
-    ImageOps.find_image(IMG("mark_image"), x_offset=1100, y_offset=-600, action="click")
+    # 设置成紧急难度
+    ImageOps.find_image(IMG("mark_image"), x_offset=1250, y_offset=-600, action="click")
 
     # 如果没找到对应关卡，滚动页面到底部
     # 点击a_n
@@ -96,8 +96,18 @@ def menu_enter_mission(final=False):
                 break
 
     # 这里通过定位地图中心加上准确的偏移量来定位机场的位置
+        # 这里通过定位地图中心加上准确的偏移量来定位每个机场的位置
+        # 从上到下顺序排序
+        # 机场一: x_offset= 270, y_offset= -100
+        # 机场二: x_offset= 270, y_offset= 280
 
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=275, y_offset=180, action="click")
+        # rescued_line in (1, 2, 3)  # 把1设置默认值,防止程序报错
+        y_offset = -100
+        if rescued_line in (4, 5, 6):
+            y_offset = 280
+
+        ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=270, y_offset=y_offset, action="click")
+
 
     # 点击“确定”
     BasicTasks.click_confirm()
@@ -161,15 +171,17 @@ def start_mission_actions():
     # 这里通过定位地图中心加上准确的偏移量来定位每条线路的位置
 
     # rescued_line = 1  # 把1设置默认值,防止程序报错
-    y_offset = -110
+    y_offset = -220
     if rescued_line == 2:
-        y_offset = 20
+        y_offset = -100
     elif rescued_line == 3:
-        y_offset = 180
+        y_offset = 30
     elif rescued_line == 4:
-        y_offset = 260
+        y_offset = 160
     elif rescued_line == 5:
-        y_offset = 380
+        y_offset = 280
+    elif rescued_line == 6:
+        y_offset = 390
 
     ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=150, y_offset=y_offset, action="click")
     ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=-100, y_offset=y_offset, action="click")
@@ -224,7 +236,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
+def main(max_actions=30, rescued_line_type=3, rescued_mission_type=1):
     """
     :param max_actions: 最大执行次数
 
@@ -235,14 +247,16 @@ def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
         * * * * * 线路三
         * * * * * 线路四
         * * * * * 线路五
+        * * * * * 线路六
 
         rescued_line = 1 表示打捞 线路一
         rescued_line = 2 表示打捞 线路二
         rescued_line = 3 表示打捞 线路三
         rescued_line = 4 表示打捞 线路四
         rescued_line = 5 表示打捞 线路五
+        rescued_line = 6 表示打捞 线路五
 
-    :param rescued_mission_type:打捞的关卡,填 1~10, "10" 对应的关卡是 A10-幽灵数据
+    :param rescued_mission_type:打捞的关卡,填 1~6, "6" 对应的关卡是 A6-无限循环
     """
     global rescued_line
     rescued_line = rescued_line_type
