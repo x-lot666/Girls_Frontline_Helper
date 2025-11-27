@@ -30,10 +30,10 @@
 | ✅  | **“灰域调查 - 计划模式”** 自动执行               | `grey_zone_inquiry`           |
 | ✅  | **“裂变链接 - 底层归乡2 战斗EX ”** 自动打捞 (MP41) | `shattered_connexion`         |
 | ✅  | **“裂变链接 - 认知裂变1 战斗EX (跑步机)”** 自动执行   | `shattered_connexion_running` |
-| ✅  | ~~**“溯源回归 - 行星环ex”** 自动打捞~~ (活动已结束)  | `back_to_origin`              |
-| ✅  | ~~**“虚子粒对 - 真空湮灭ex”** 自动打捞~~ (活动已结束) | `virtual_pair`                |
-| ✅  | ~~**“蝴蝶星云-特殊的派遣ex”** 自动打捞~~ (活动已结束)  | `butterfly_nebula`            |
-| ✅  | ~~**“零态潮汐-种子ex”** 自动打捞~~ (活动已结束)     | `quantum_fluctuation`         |
+| ❌  | ~~**“溯源回归 - 行星环ex”** 自动打捞~~ (活动已结束)  | `back_to_origin`              |
+| ❌  | ~~**“虚子粒对 - 真空湮灭ex”** 自动打捞~~ (活动已结束) | `virtual_pair`                |
+| ❌  | ~~**“蝴蝶星云-特殊的派遣ex”** 自动打捞~~ (活动已结束)  | `butterfly_nebula`            |
+| ❌  | ~~**“零态潮汐-种子ex”** 自动打捞~~ (活动已结束)     | `quantum_fluctuation`         |
 
 🗺️ 常规战役
 
