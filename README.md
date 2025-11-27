@@ -1,6 +1,6 @@
 # Girl's Frontline Helper
 
-少女前线 Steam 版自动化脚本
+少女前线 Steam 版自动化脚本(至少要知道怎么安装python才能使用)
 
 ---
 
