@@ -4,7 +4,7 @@ from core_ops.composed.composed_ops import *
 from game_ops.composed_tasks import *
 
 """
-循演战役 A-紧急 自动打捞
+循演战役 A-夜战 自动打捞
 说明:
     - 把主力队放在第一梯队。
     - 确保第一次进入战斗前,仓库人形未满员(第一次不做自动回收处理”。
@@ -17,10 +17,10 @@ from game_ops.composed_tasks import *
 # 请不要修改此处的任何变量,各项可调参数在主函数"main()"处设置
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("a_emergency")
+set_resource_subdir("a_midnight")
 
 # 场景名称
-scene_name = "[循演战役 A-紧急 自动打捞]"
+scene_name = "[循演战役 A-夜战 自动打捞]"
 
 # 线程设置
 window_event = threading.Event()
@@ -55,8 +55,8 @@ def menu_enter_mission(final=False):
                 if ImageOps.find_image(IMG("battle_a"), confidence=0.95, timeout=0.5, action="click"):
                     break
 
-    # 设置成紧急难度
-    ImageOps.find_image(IMG("mark_image"), x_offset=1250, y_offset=-600, action="click")
+    # 设置成夜战难度
+    ImageOps.find_image(IMG("mark_image"), x_offset=1400, y_offset=-600, action="click")
 
     # 如果没找到对应关卡，滚动页面到底部
     # 点击a_n
@@ -66,24 +66,29 @@ def menu_enter_mission(final=False):
             wait(0.2)
             MouseOps.scroll_mouse(-3, 5)
             # 点击a_n
-            if ImageOps.find_image(IMG("battle_a_" + str(rescued_mission)), confidence=0.90, timeout=0.5, action="click"):
+            if ImageOps.find_image(IMG("battle_a_" + str(rescued_mission)), confidence=0.90, timeout=0.5,
+                                   action="click"):
                 break
 
     # 等待并点击“普通作战”
     ImageOps.find_image(COMMON_IMG("normal_battle"), random_point=True, action="click")
 
+    wait(2.5)
+
     # 等待“开始作战”按钮出现
     ImageOps.wait_image(COMMON_IMG("start_battle"))
 
     # 定位“机场”
-    if ImageOps.locate_image(IMG("airport"), confidence=0.90) is None:
+    if ImageOps.locate_image(IMG("airport"), confidence=0.90) is None and ImageOps.locate_image(IMG("airport_2"),
+                                                                                               confidence=0.90) is None:
         ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, padding=30,
                             action="move")
         MouseOps.scroll_mouse(-3, 60)  # 向下滚动鼠标,缩小地图
         MouseOps.drag_rel(0, 600)  # 把地图移到最上方
 
         while True:
-            if ImageOps.locate_image(IMG("airport"), confidence=0.90):
+            if ImageOps.locate_image(IMG("airport"), confidence=0.90) or ImageOps.locate_image(IMG("airport_2"),
+                                                                                               confidence=0.90):
                 break
 
             # 把地图移到最右边
@@ -92,21 +97,28 @@ def menu_enter_mission(final=False):
                                 action="move")
             MouseOps.drag_rel(-1000, 0, 0.5)
 
-            if ImageOps.locate_image(IMG("airport"), confidence=0.90):
+            if ImageOps.locate_image(IMG("airport"), confidence=0.90) or ImageOps.locate_image(IMG("airport_2"),
+                                                                                               confidence=0.90):
                 break
 
     # 这里通过定位地图中心加上准确的偏移量来定位每个机场的位置
     # 从上到下顺序排序
     # 机场一: x_offset= 270, y_offset= -100
-    # 机场二: x_offset= 270, y_offset= 280
+    # 机场二: x_offset= 270, y_offset= 40
 
-    # rescued_line in (1, 2, 3)  # 把1设置默认值,防止程序报错
-    y_offset = -100
-    if rescued_line in (4, 5, 6):
-        y_offset = 280
+    # 由于关卡 A6-唤醒序列 的地图与前5关都不一样,单独进行设置
+    if rescued_mission is not 6:
 
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=270, y_offset=y_offset, action="click")
+        # rescued_line in (1, 2)  # 把1设置默认值,防止程序报错
+        y_offset = -100
+        if rescued_line in (3, 4):
+            y_offset = 40
 
+        ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=270, y_offset=y_offset, action="click")
+
+    else:
+
+        ImageOps.find_image(IMG("airport_2"), confidence=0.80, x_offset=270, y_offset=40, action="click")
 
     # 点击“确定”
     BasicTasks.click_confirm()
@@ -169,23 +181,44 @@ def start_mission_actions():
 
     # 这里通过定位地图中心加上准确的偏移量来定位每条线路的位置
 
-    # rescued_line = 1  # 把1设置默认值,防止程序报错
-    y_offset = -220
-    if rescued_line == 2:
-        y_offset = -100
-    elif rescued_line == 3:
-        y_offset = 30
-    elif rescued_line == 4:
-        y_offset = 160
-    elif rescued_line == 5:
-        y_offset = 280
-    elif rescued_line == 6:
-        y_offset = 390
+    if rescued_mission is not 6:
 
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=150, y_offset=y_offset, action="click")
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=-100, y_offset=y_offset, action="click")
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=-350, y_offset=y_offset, action="click")
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=-100, y_offset=y_offset, action="click")
+        # rescued_line = 1  # 把1设置默认值,防止程序报错
+        y_offset = -220
+        if rescued_line == 2:
+            y_offset = -100
+        elif rescued_line == 3:
+            y_offset = 40
+        elif rescued_line == 4:
+            y_offset = 160
+    else:
+
+        # rescued_line = 1  # 把1设置默认值,防止程序报错
+        y_offset = -100
+        if rescued_line == 2:
+            y_offset = 40
+        elif rescued_line == 3:
+            y_offset = 160
+
+    # 由于关卡 A6-唤醒序列 的地图与前5关都不一样,单独进行设置
+    if rescued_mission is not 6:
+
+        # 夜战地图只能这样识别,路径点多了容易识别不到
+        location = ImageOps.wait_image(IMG("airport"), confidence=0.70)
+
+    else:
+
+        # 夜战地图只能这样识别,路径点多了容易识别不到
+        location = ImageOps.wait_image(IMG("airport_2"), confidence=0.70)
+
+    MouseOps.left_click_at(location.x + 150, location.y + y_offset)
+    MouseOps.left_click_at(location.x + -100, location.y + y_offset)
+    MouseOps.left_click_at(location.x + -350, location.y + y_offset)
+    MouseOps.left_click_at(location.x + -100, location.y + y_offset)
+    # ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=150, y_offset=y_offset, action="click")
+    # ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=-100, y_offset=y_offset, action="click")
+    # ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=-350, y_offset=y_offset, action="click")
+    # ImageOps.find_image(IMG("airport"), confidence=0.70, x_offset=-100, y_offset=y_offset, action="click")
 
     # 点击“执行计划”
     BasicTasks.click_execute_plan()
@@ -245,17 +278,14 @@ def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
         * * * * * 线路二
         * * * * * 线路三
         * * * * * 线路四
-        * * * * * 线路五
-        * * * * * 线路六
 
         rescued_line = 1 表示打捞 线路一
         rescued_line = 2 表示打捞 线路二
         rescued_line = 3 表示打捞 线路三
         rescued_line = 4 表示打捞 线路四
-        rescued_line = 5 表示打捞 线路五
-        rescued_line = 6 表示打捞 线路六
 
-    :param rescued_mission_type:打捞的关卡,填 1~6, "6" 对应的关卡是 A6-无限循环
+    :param rescued_mission_type:打捞的关卡,填 1~5, "6" 对应的关卡是 A6-唤醒序列
+    注意:关卡 A6-唤醒序列 只有三条线路,如果填的数字大于3,仍然打捞路线一
     """
     global rescued_line
     rescued_line = rescued_line_type
