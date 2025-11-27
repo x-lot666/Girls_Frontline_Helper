@@ -95,18 +95,17 @@ def menu_enter_mission(final=False):
             if ImageOps.locate_image(IMG("airport"), confidence=0.90):
                 break
 
-    # 这里通过定位地图中心加上准确的偏移量来定位机场的位置
-        # 这里通过定位地图中心加上准确的偏移量来定位每个机场的位置
-        # 从上到下顺序排序
-        # 机场一: x_offset= 270, y_offset= -100
-        # 机场二: x_offset= 270, y_offset= 280
+    # 这里通过定位地图中心加上准确的偏移量来定位每个机场的位置
+    # 从上到下顺序排序
+    # 机场一: x_offset= 270, y_offset= -100
+    # 机场二: x_offset= 270, y_offset= 280
 
-        # rescued_line in (1, 2, 3)  # 把1设置默认值,防止程序报错
-        y_offset = -100
-        if rescued_line in (4, 5, 6):
-            y_offset = 280
+    # rescued_line in (1, 2, 3)  # 把1设置默认值,防止程序报错
+    y_offset = -100
+    if rescued_line in (4, 5, 6):
+        y_offset = 280
 
-        ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=270, y_offset=y_offset, action="click")
+    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=270, y_offset=y_offset, action="click")
 
 
     # 点击“确定”
@@ -236,7 +235,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_line_type=3, rescued_mission_type=1):
+def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
     """
     :param max_actions: 最大执行次数
 
