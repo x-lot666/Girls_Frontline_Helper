@@ -227,7 +227,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=100, rescued_line_type=1, rescued_mission_type=1):
+def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
     """
     :param max_actions: 最大执行次数
 

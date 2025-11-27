@@ -182,7 +182,7 @@ def start_mission_actions():
     elif rescued_line == 5:
         y_offset = 280
     elif rescued_line == 6:
-        y_offset = 385
+        y_offset = 380
 
     ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=150, y_offset=y_offset, action="click")
     ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=-100, y_offset=y_offset, action="click")
@@ -237,7 +237,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_line_type=6, rescued_mission_type=1):
+def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
     """
     :param max_actions: 最大执行次数
 
