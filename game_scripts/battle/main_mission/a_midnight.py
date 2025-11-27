@@ -42,7 +42,7 @@ def menu_enter_mission(final=False):
     BasicTasks.click_home_battle_button()
 
     # 如果循演战役没被激活，则点击循演战役
-    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=1.5):
+    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=5.5):
         # 切换至作战任务界面
         ImageOps.find_image(COMMON_IMG("combat_mission"), action="click")
 

@@ -42,7 +42,7 @@ def menu_enter_mission(final=False):
     BasicTasks.click_home_battle_button()
 
     # 如果循演战役没被激活，则点击循演战役
-    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=1.5):
+    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=2.5):
         # 切换至作战任务界面
         ImageOps.find_image(COMMON_IMG("combat_mission"), action="click")
 
@@ -97,7 +97,7 @@ def menu_enter_mission(final=False):
 
     # 这里通过定位地图中心加上准确的偏移量来定位机场的位置
 
-    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=275, y_offset=180, action="click")
+    ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=275, y_offset=150, action="click")
 
     # 点击“确定”
     BasicTasks.click_confirm()
@@ -165,11 +165,11 @@ def start_mission_actions():
     if rescued_line == 2:
         y_offset = 20
     elif rescued_line == 3:
-        y_offset = 180
+        y_offset = 150
     elif rescued_line == 4:
-        y_offset = 260
+        y_offset = 270
     elif rescued_line == 5:
-        y_offset = 380
+        y_offset = 385
 
     ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=150, y_offset=y_offset, action="click")
     ImageOps.find_image(IMG("airport"), confidence=0.80, x_offset=-100, y_offset=y_offset, action="click")
@@ -224,7 +224,7 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
+def main(max_actions=100, rescued_line_type=1, rescued_mission_type=1):
     """
     :param max_actions: 最大执行次数
 
