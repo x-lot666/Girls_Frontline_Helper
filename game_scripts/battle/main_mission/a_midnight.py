@@ -42,7 +42,7 @@ def menu_enter_mission(final=False):
     BasicTasks.click_home_battle_button()
 
     # 如果循演战役没被激活，则点击循演战役
-    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=5.5):
+    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=1.5):
         # 切换至作战任务界面
         ImageOps.find_image(COMMON_IMG("combat_mission"), action="click")
 
@@ -52,7 +52,9 @@ def menu_enter_mission(final=False):
                 ImageOps.find_image(IMG("mark_image"), x_offset=260, y_offset=-200, action="move")
                 wait(0.2)
                 MouseOps.scroll_mouse(-3, 20)
-                if ImageOps.find_image(IMG("battle_a"), confidence=0.95, timeout=0.5, action="click"):
+                if ImageOps.find_image(IMG("battle_a"), confidence=0.95, timeout=0.5,
+                                       action="click") or ImageOps.find_image(IMG("battle_a_active"), confidence=0.90,
+                                                                              timeout=0.5, action="move"):
                     break
 
     # 设置成夜战难度
@@ -80,7 +82,7 @@ def menu_enter_mission(final=False):
 
     # 定位“机场”
     if ImageOps.locate_image(IMG("airport"), confidence=0.90) is None and ImageOps.locate_image(IMG("airport_2"),
-                                                                                               confidence=0.90) is None:
+                                                                                                confidence=0.90) is None:
         ImageOps.find_image(COMMON_IMG("enable_plan_mode"), x_offset=0, y_offset=-300, padding=30,
                             action="move")
         MouseOps.scroll_mouse(-3, 60)  # 向下滚动鼠标,缩小地图

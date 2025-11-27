@@ -42,7 +42,7 @@ def menu_enter_mission(final=False):
     BasicTasks.click_home_battle_button()
 
     # 如果循演战役没被激活，则点击循演战役
-    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=2.5):
+    if not ImageOps.wait_image(IMG("battle_a_active"), confidence=0.9, timeout=1.5):
         # 切换至作战任务界面
         ImageOps.find_image(COMMON_IMG("combat_mission"), action="click")
 
@@ -52,7 +52,9 @@ def menu_enter_mission(final=False):
                 ImageOps.find_image(IMG("mark_image"), x_offset=260, y_offset=-200, action="move")
                 wait(0.2)
                 MouseOps.scroll_mouse(-3, 20)
-                if ImageOps.find_image(IMG("battle_a"), confidence=0.95, timeout=0.5, action="click"):
+                if ImageOps.find_image(IMG("battle_a"), confidence=0.95, timeout=0.5,
+                                       action="click") or ImageOps.find_image(IMG("battle_a_active"), confidence=0.90,
+                                                                              timeout=0.5, action="move"):
                     break
 
     # 设置成普通难度
@@ -66,7 +68,8 @@ def menu_enter_mission(final=False):
             wait(0.2)
             MouseOps.scroll_mouse(-3, 5)
             # 点击a_n
-            if ImageOps.find_image(IMG("battle_a_" + str(rescued_mission)), confidence=0.90, timeout=0.5, action="click"):
+            if ImageOps.find_image(IMG("battle_a_" + str(rescued_mission)), confidence=0.90, timeout=0.5,
+                                   action="click"):
                 break
 
     # 等待并点击“普通作战”
