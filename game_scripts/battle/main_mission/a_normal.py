@@ -227,9 +227,11 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
+def main(max_actions=30, rescued_mission_type=1, rescued_line_type=1):
     """
     :param max_actions: 最大执行次数
+
+    :param rescued_mission_type:打捞的关卡,填 1~10, "10" 对应的关卡是 A10-幽灵数据
 
     :param rescued_line_type: 打捞的线路,从上往下顺序排序,如图
 
@@ -245,7 +247,6 @@ def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
         rescued_line = 4 表示打捞 线路四
         rescued_line = 5 表示打捞 线路五
 
-    :param rescued_mission_type:打捞的关卡,填 1~10, "10" 对应的关卡是 A10-幽灵数据
     """
     global rescued_line
     rescued_line = rescued_line_type

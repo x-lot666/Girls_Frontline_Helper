@@ -212,6 +212,16 @@ def _handle_doll_repair():
     return False
 
 
+def _handle_new_dolls():
+    """处理打捞人形时出现新人形的窗口"""
+    if ImageOps.is_image_stable_for_seconds(COMMON_IMG("share_button"), confidence=0.80, check_time=3):
+        logging.info("[窗口检测] 打捞到新人形")
+        ImageOps.find_image(COMMON_IMG("share_button"), confidence=0.80, y_offset=160, action="click")
+        wait(5)
+        return True
+    return False
+
+
 # 处理意外窗口的复合函数
 def deal_unexpected_windows():
     """
@@ -237,6 +247,8 @@ def deal_unexpected_windows():
         elif _handle_achievement_unlock():
             handled = True
         elif _handle_doll_repair():
+            handled = True
+        elif _handle_new_dolls():
             handled = True
 
         if handled:
@@ -272,6 +284,7 @@ def deal_unexpected_windows_retire_3_4():
     result2 = deal_unexpected_windows()
 
     return result1 or result2
+
 
 # 处理意外窗口的复合函数，会根据强化等级排序强化装备
 def deal_unexpected_windows_upgrade_equipment():

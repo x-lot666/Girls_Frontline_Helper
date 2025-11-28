@@ -270,9 +270,12 @@ def window_monitor(action_limit_event):
         time.sleep(1)
 
 
-def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
+def main(max_actions=30, rescued_mission_type=1, rescued_line_type=1):
     """
     :param max_actions: 最大执行次数
+
+    :param rescued_mission_type:打捞的关卡,填 1~5, "6" 对应的关卡是 A6-唤醒序列
+    注意:关卡 A6-唤醒序列 只有三条线路,如果填的数字大于3,仍然打捞路线一
 
     :param rescued_line_type: 打捞的线路,从上往下顺序排序,如图
 
@@ -286,8 +289,6 @@ def main(max_actions=30, rescued_line_type=1, rescued_mission_type=1):
         rescued_line = 3 表示打捞 线路三
         rescued_line = 4 表示打捞 线路四
 
-    :param rescued_mission_type:打捞的关卡,填 1~5, "6" 对应的关卡是 A6-唤醒序列
-    注意:关卡 A6-唤醒序列 只有三条线路,如果填的数字大于3,仍然打捞路线一
     """
     global rescued_line
     rescued_line = rescued_line_type
