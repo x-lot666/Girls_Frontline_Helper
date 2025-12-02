@@ -1,0 +1,21 @@
+#- type: event_mission
+#  level: shattered_connexion_running
+#  args: [6]   运行6次跑步机
+#
+#- type: main_mission
+#  level: a_normal
+#  args: [10, 3, 1]   打捞10次 第3关的线路1
+
+
+
+- type: main_mission
+  level: a_normal
+  args: [20, 1, 4]
+
+- type: main_mission
+  level: a_normal
+  args: [20, 1, 5]
+
+- type: main_mission
+  level: a_emergency
+  args: [20, 6, 2]

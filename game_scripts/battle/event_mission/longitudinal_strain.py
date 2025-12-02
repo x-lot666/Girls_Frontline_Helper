@@ -19,7 +19,7 @@ from game_ops.composed_tasks import *
 # 请不要修改此处的任何变量,各项可调参数在主函数"main()"处设置
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("longitudinal_strain")
+resource_subdir = "longitudinal_strain"
 
 # 场景名称
 scene_name = "[纵向应变-五重奏回旋曲ux 自动打捞]"
@@ -209,6 +209,7 @@ def main(max_actions=30):
     """
     :param max_actions: 最大执行次数
     """
+    set_resource_subdir(resource_subdir)
     print_banner(scene_name + " 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():

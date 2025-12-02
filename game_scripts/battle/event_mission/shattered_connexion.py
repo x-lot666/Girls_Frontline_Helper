@@ -11,7 +11,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("shattered_connexion")
+resource_subdir = "shattered_connexion"
 
 
 def menu_enter_mission():
@@ -231,6 +231,7 @@ def main(max_actions=30):
     :param max_actions: 最大执行次数
     :return:
     """
+    set_resource_subdir(resource_subdir)
     print_banner("[裂变链接-底层归乡2 战斗EX 自动打捞] 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():

@@ -7,7 +7,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("1_1")
+resource_subdir = "1_1"
 
 
 def menu_enter_mission():
@@ -147,6 +147,7 @@ def main(max_actions=5):
     :param max_actions: 最大执行次数
     :return:
     """
+    set_resource_subdir(resource_subdir)
     print_banner("[1-1 刷友情点数] 自动化执行开始")
     WindowOps.activate_window("少女前线")  # 激活游戏窗口
     action_count = 1  # 初始化执行计数

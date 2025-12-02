@@ -131,6 +131,7 @@ pip install -r requirements.txt
 | `game_scripts/` | 游戏脚本目录，对应各个功能模块 |
 | ├── `battle/`   | 战斗相关的脚本         |
 | └── `other/`    | 其他类型的脚本         |
+| `logs/`         | 脚本运行日志          |
 
 **核心模块功能**
 

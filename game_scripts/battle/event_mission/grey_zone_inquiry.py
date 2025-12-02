@@ -9,7 +9,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("grey_zone_inquiry")
+resource_subdir = "grey_zone_inquiry"
 
 
 def menu_enter_mission():
@@ -213,6 +213,7 @@ def main(max_actions=3, select_difficulty="hard_mode"):
     "结晶带": "ex_mode"
     :return:
     """
+    set_resource_subdir(resource_subdir)
     print_banner("[灰域调查 自动执行] 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():

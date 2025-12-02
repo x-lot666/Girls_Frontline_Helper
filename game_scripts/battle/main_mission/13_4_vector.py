@@ -13,7 +13,7 @@ from core_ops.composed.composed_ops import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("13_4_vector")
+resource_subdir = "13_4_vector"
 
 
 def menu_enter_mission(final=False):
@@ -234,6 +234,7 @@ def main(max_actions=999):
     """
     :param max_actions: 最大执行次数
     """
+    set_resource_subdir(resource_subdir)
     print_banner("[13-4 双vector拖尸] 自动化执行开始")
 
     WindowOps.activate_window("少女前线")  # 激活游戏窗口

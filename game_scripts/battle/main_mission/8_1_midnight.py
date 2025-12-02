@@ -23,7 +23,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("8_1_midnight")
+resource_subdir = "8_1_midnight"
 
 # 通用配置项------------------------------------------------------------------
 temp_team = True  # 配置是否使用狗粮队
@@ -259,6 +259,7 @@ def main(max_actions=999):
     """
     :param max_actions:最大执行次数
     """
+    set_resource_subdir(resource_subdir)
     print_banner("[8-1 midnight 双Zas拖尸] 自动化执行开始")
     logging.info(f"[配置] 使用狗粮队: {temp_team}")
     logging.info(f"[配置] 开启装备升级: {upgrade_equipment}")

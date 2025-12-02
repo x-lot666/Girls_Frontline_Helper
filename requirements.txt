@@ -4,3 +4,4 @@ numpy
 matplotlib~=3.9.4
 PyGetWindow~=0.0.9
 pywin32
+PyYAML

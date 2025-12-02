@@ -12,7 +12,7 @@ from game_ops.composed_tasks import *
 """
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("shattered_connexion_running")
+resource_subdir = "shattered_connexion_running"
 
 
 def menu_enter_mission():
@@ -343,6 +343,7 @@ def main(max_actions=6):
     :param max_actions: 最大执行次数
     :return:
     """
+    set_resource_subdir(resource_subdir)
     print_banner("[裂变链接-认知裂变1 战斗EX 跑步机自动执行] 自动化执行开始")
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():

@@ -17,7 +17,7 @@ from game_ops.composed_tasks import *
 # 请不要修改此处的任何变量,各项可调参数在主函数"main()"处设置
 
 # 所用的资源图片的文件夹名称
-set_resource_subdir("a_normal")
+resource_subdir = "a_normal"
 
 # 场景名称
 scene_name = "[循演战役 A-普通 自动打捞]"
@@ -248,6 +248,7 @@ def main(max_actions=30, rescued_mission_type=1, rescued_line_type=1):
         rescued_line = 5 表示打捞 线路五
 
     """
+    set_resource_subdir(resource_subdir)
     global rescued_line
     rescued_line = rescued_line_type
     global rescued_mission
