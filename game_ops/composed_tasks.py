@@ -6,6 +6,33 @@ from game_ops.basic_tasks import *
 # 游戏中的复合逻辑流程
 # --------------------------
 
+# 从主菜单进行人形回收
+def menu_enter_retire_dolls():
+    logging.info("[人形回收] 开始人形回收流程")
+    ImageOps.find_image(COMMON_IMG("factory"), confidence=0.9, padding=15, action="click")
+    ImageOps.find_image(COMMON_IMG("resource_retire"), confidence=0.9, padding=15, action="click")
+    wait(0.8)  # 等待人形回收界面加载,非常重要
+    ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
+
+    if ImageOps.wait_image(COMMON_IMG("retire_dolls_2"), timeout=1):
+        ImageOps.find_image(COMMON_IMG("retire_dolls_2"), random_point=True, action="click")
+
+        if ImageOps.wait_image(COMMON_IMG("confirm"), confidence=0.75, timeout=1):
+            BasicTasks.click_confirm()
+            ImageOps.find_image(COMMON_IMG("retire"), random_point=True, action="click")
+            wait(1)  # 等待人形回收完成
+
+        else:
+            logging.info("[人形回收] 无可回收人形")
+            BasicTasks.click_back_button()
+            wait(0.5)
+            BasicTasks.click_back_button()
+    else:
+        logging.info("[人形回收] 无可回收人形")
+    BasicTasks.click_back_button()
+    logging.info("[人形回收] 人形回收完成")
+
+
 # 进入作战时仓库满员的人形回收
 def retire_dolls():
     logging.info("[人形回收] 开始人形回收流程")

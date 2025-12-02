@@ -278,6 +278,9 @@ def main(max_actions=30, rescued_mission_type=1, rescued_line_type=1):
         # 检查执行次数是否超过限制
         check_action_limit(action_count, max_actions)
 
+        logging.info("先进行一次人形回收,防止程序卡死")
+        menu_enter_retire_dolls()
+
         logging.info(scene_name + " 从主菜单进入任务")
         logging.info(f"[计数] 当前打捞次数: {action_count} ")
         menu_enter_mission()
