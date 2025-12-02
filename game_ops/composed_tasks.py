@@ -217,9 +217,7 @@ def _handle_new_dolls():
     if ImageOps.is_image_stable_for_seconds(COMMON_IMG("share_button"), confidence=0.80, check_time=3):
         logging.info("[窗口检测] 打捞到新人形")
         ImageOps.find_image(COMMON_IMG("share_button"), confidence=0.80, y_offset=160, action="click")
-        wait(5)
-        return True
-    return False
+        wait(1)
 
 
 # 处理意外窗口的复合函数
