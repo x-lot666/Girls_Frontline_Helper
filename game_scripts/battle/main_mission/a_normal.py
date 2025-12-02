@@ -284,8 +284,8 @@ def main(max_actions=30, rescued_mission_type=1, rescued_line_type=1):
             if window_event.is_set():
                 break
 
-            # 定位到“team 1”或机场的图像,表示可以继续进行任务
-            if ImageOps.locate_image(IMG("team_1")) or ImageOps.locate_image(IMG("airport"), confidence=0.7):
+            # 定位"开始作战"的图像,表示可以继续进行任务
+            if ImageOps.locate_image(COMMON_IMG("start_battle")):
                 logging.info(scene_name + " 重复进行任务")
                 logging.info(f"[计数] 当前打捞次数: {action_count} ")
                 repeat_mission()

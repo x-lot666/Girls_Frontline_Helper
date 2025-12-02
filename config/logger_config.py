@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 # 参数设置
-LOG_LEVEL = logging.INFO  # 控制台输出级别（如果要调试改成 logging.DEBUG）
+LOG_LEVEL = logging.DEBUG  # 控制台输出级别（如果要调试改成 logging.DEBUG）
 MAX_LOG_FILES = 10  # 最多保留日志数量
 
 # 生成日志目录与文件名
