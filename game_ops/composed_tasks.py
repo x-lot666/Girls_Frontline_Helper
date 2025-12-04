@@ -242,6 +242,7 @@ def _handle_new_dolls():
     if ImageOps.is_image_stable_for_seconds(COMMON_IMG("share_button"), confidence=0.80, check_time=3):
         logging.info("[窗口检测] 打捞到新人形")
         ImageOps.find_image(COMMON_IMG("share_button"), confidence=0.80, y_offset=160, action="click")
+        ImageOps.find_image(COMMON_IMG("battle_end_flag"), confidence=0.75, timeout=3, action="click")
         wait(1)
 
 
