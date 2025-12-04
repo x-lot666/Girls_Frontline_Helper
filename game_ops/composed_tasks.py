@@ -25,8 +25,6 @@ def menu_enter_retire_dolls():
         else:
             logging.info("[人形回收] 无可回收人形")
             BasicTasks.click_back_button()
-            wait(0.5)
-            BasicTasks.click_back_button()
     else:
         logging.info("[人形回收] 无可回收人形")
     BasicTasks.click_back_button()
