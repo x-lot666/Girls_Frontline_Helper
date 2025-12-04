@@ -9,7 +9,7 @@ from game_ops.basic_tasks import *
 # 从主菜单进行人形回收
 def menu_enter_retire_dolls():
     logging.info("[人形回收] 开始人形回收流程")
-    ImageOps.find_image(COMMON_IMG("factory"), confidence=0.78, padding=15, action="click")
+    ImageOps.find_image(COMMON_IMG("factory"), confidence=0.7, padding=15, action="click")
     ImageOps.find_image(COMMON_IMG("resource_retire"), confidence=0.9, padding=15, action="click")
     wait(0.8)  # 等待人形回收界面加载,非常重要
     ImageOps.find_image(COMMON_IMG("retire_dolls_1"), confidence=0.95, random_point=True, padding=15, action="click")
