@@ -223,6 +223,8 @@ def main(max_actions=3, select_difficulty="hard_mode"):
     action_limit = False
 
     while True:
+        logging.info("先进行一次人形回收,防止程序卡死")
+        menu_enter_retire_dolls()
 
         logging.info("[灰域调查 自动执行] 从主菜单进入任务")
         menu_enter_mission()

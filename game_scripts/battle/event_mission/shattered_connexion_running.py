@@ -353,6 +353,8 @@ def main(max_actions=6):
     action_limit = False
 
     while True:
+        logging.info("先进行一次人形回收,防止程序卡死")
+        menu_enter_retire_dolls()
 
         logging.info("[裂变链接-认知裂变1 战斗EX 跑步机自动执行] 从主菜单进入任务")
         logging.info(f"[计数] 当前执行次数: {action_count}")

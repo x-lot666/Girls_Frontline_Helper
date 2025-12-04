@@ -215,11 +215,15 @@ def main(max_actions=30):
     if not launch_gf():
         logging.error("[启动异常] 启动游戏失败")
         exit()
+
     action_count = 1  # 初始化执行计数
 
     while True:
         # 检查执行次数是否超过限制
         check_action_limit(action_count, max_actions)
+
+        logging.info("先进行一次人形回收,防止程序卡死")
+        menu_enter_retire_dolls()
 
         logging.info(scene_name + " 从主菜单进入任务")
         logging.info(f"[计数] 当前打捞次数: {action_count} ")
