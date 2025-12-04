@@ -1,6 +1,7 @@
 import threading
 
 from core_ops.composed.composed_ops import *
+from core_ops.utils.exceptions import MissionFinished
 from game_ops.composed_tasks import *
 
 """
@@ -198,7 +199,7 @@ def final_mission():
     logging.info(f"[终止] 已达到最大执行次数")
     print_banner(scene_name + " 自动化执行结束")
 
-    exit()
+    raise MissionFinished()
 
 
 # 检查执行次数是否超过限制
@@ -257,7 +258,7 @@ def main(max_actions=30, rescued_mission_type=1, rescued_line_type=1):
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():
         logging.error("[启动异常] 启动游戏失败")
-        exit()
+        raise MissionFinished()
 
     action_count = 1  # 初始化执行计数
 

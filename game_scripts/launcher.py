@@ -1,5 +1,8 @@
 import yaml
+import logging
 import importlib
+
+from core_ops.utils.exceptions import MissionFinished
 
 BASE_PATH = "game_scripts.battle"
 
@@ -12,7 +15,10 @@ def run_task(task):
     module_path = f"{BASE_PATH}.{mtype}.{level}"
     module = importlib.import_module(module_path)
 
-    module.main(*args)
+    try:
+        module.main(*args)
+    except MissionFinished:
+        logging.info("当前任务已完成,执行下一个任务")
 
 
 def main():

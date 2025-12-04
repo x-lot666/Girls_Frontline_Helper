@@ -1,3 +1,4 @@
+from core_ops.utils.exceptions import MissionFinished
 from game_ops.composed_tasks import *
 from core_ops.composed.composed_ops import *
 
@@ -270,7 +271,7 @@ def main(max_actions=999):
                 print(f"[终止] 已达到最大执行次数 {max_actions},程序结束")
 
                 print_banner("[13-v 双vector拖尸] 自动化执行结束")
-                exit()
+                raise MissionFinished()
 
 
 if __name__ == '__main__':

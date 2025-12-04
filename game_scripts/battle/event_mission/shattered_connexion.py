@@ -1,4 +1,5 @@
 from core_ops.composed.composed_ops import *
+from core_ops.utils.exceptions import MissionFinished
 from game_ops.composed_tasks import *
 
 """
@@ -236,7 +237,7 @@ def main(max_actions=30):
     # 激活游戏窗口,如果失败则自动打开少女前线
     if not launch_gf():
         logging.error("[启动异常] 启动游戏失败")
-        exit()
+        raise MissionFinished()
     action_count = 1  # 初始化执行计数
     action_limit = False
 
@@ -275,7 +276,7 @@ def main(max_actions=30):
                 print(f"[终止] 已达到最大执行次数 {max_actions},程序结束")
 
                 print_banner("[裂变链接-底层归乡2 战斗EX 自动打捞] 自动化执行结束")
-                exit()
+                raise MissionFinished()
 
 
 if __name__ == '__main__':
