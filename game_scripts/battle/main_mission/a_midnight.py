@@ -67,6 +67,7 @@ def menu_enter_mission(final=False):
             ImageOps.find_image(IMG("mark_image_2"), action="move")
             wait(0.2)
             MouseOps.scroll_mouse(-3, 5)
+            wait(1)
             # 点击a_n
             if ImageOps.find_image(IMG("battle_a_" + str(rescued_mission)), confidence=0.90, timeout=0.5,
                                    action="click"):
@@ -236,7 +237,10 @@ def final_mission():
     else:
         start_mission_actions()
     # 等待任务结束
-    ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=300, action="move")
+    ImageOps.wait_image(COMMON_IMG("repeat_battle"))
+    # 等待动画加载
+    wait(1)
+    ImageOps.find_image(COMMON_IMG("repeat_battle"), x_offset=-460, y_offset=60, action="move")
     # 返回主菜单
     ImageOps.hold_click_until_image_appear(COMMON_IMG("back_button"), click_after=True)
     logging.info(f"[终止] 已达到最大执行次数")
